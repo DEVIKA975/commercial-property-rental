@@ -1,0 +1,33 @@
+name: CI/CD Pipeline
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install Backend deps
+        working-directory: backend
+        run: npm ci
+      - name: Run tests (placeholder)
+        run: echo "Add tests here"
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install Frontend deps & build
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build

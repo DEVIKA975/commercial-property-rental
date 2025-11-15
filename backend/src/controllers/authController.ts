@@ -7,6 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'devsecret';
 
 export async function register(req: Request, res: Response) {
   const { email, password, name } = req.body;
+  if (!email || !password) return res.status(400).json({ error: 'Missing fields' });
   const hashed = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({ data: { email, password: hashed, name } });
   res.status(201).json({ id: user.id, email: user.email });
@@ -20,4 +21,17 @@ export async function login(req: Request, res: Response) {
   if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
   const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
   res.json({ token });
+}
+
+export async function me(req: Request, res: Response) {
+  const h = req.headers.authorization;
+  if (!h?.startsWith('Bearer ')) return res.status(401).json({ error: 'Missing token' });
+  const token = h.split(' ')[1];
+  try {
+    const payload: any = jwt.verify(token, JWT_SECRET);
+    const user = await prisma.user.findUnique({ where: { id: payload.id } });
+    res.json({ id: user?.id, email: user?.email, name: user?.name, role: user?.role });
+  } catch (e) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
 }

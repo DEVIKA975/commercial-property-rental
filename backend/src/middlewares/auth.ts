@@ -15,3 +15,12 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     return res.status(401).json({ error: 'Invalid token' });
   }
 }
+
+export function requireRole(role: 'ADMIN'|'LANDLORD'|'TENANT') {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const user = (req as any).user;
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    if (user.role !== role) return res.status(403).json({ error: 'Forbidden' });
+    next();
+  };
+}

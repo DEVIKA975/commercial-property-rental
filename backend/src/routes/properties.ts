@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import * as controller from '../controllers/propertyController';
-import { requireAuth } from '../middlewares/auth';
+import { requireAuth, requireRole } from '../middlewares/auth';
 
 const router = Router();
 router.get('/', controller.listProperties);
 router.get('/:id', controller.getProperty);
 router.post('/', requireAuth, controller.createProperty);
 router.put('/:id', requireAuth, controller.updateProperty);
-router.delete('/:id', requireAuth, controller.deleteProperty);
+router.delete('/:id', requireAuth, requireRole('ADMIN'), controller.deleteProperty);
+router.post('/:id/approve', requireAuth, requireRole('ADMIN'), controller.approveProperty);
 
 export default router;
