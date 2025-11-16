@@ -7,25 +7,23 @@ export default function Dashboard() {
   const nav = useNavigate();
   useEffect(() => {
     API.get('/auth/me').then(r => {
-      // if not logged in, redirect to login
+      // OK
     }).catch(()=>nav('/login'));
     API.get('/properties').then(r => setPropsList(r.data)).catch(()=>setPropsList([]));
   }, []);
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <h1 className="text-2xl font-semibold">Dashboard</h1>
       <div className="mt-4">
         {propsList.map(p => (
-          <div key={p.id} className="border p-3 rounded mb-2">
-            <div className="flex justify-between">
-              <div>
-                <div className="font-semibold">{p.title}</div>
-                <div className="text-sm text-gray-600">{p.city}</div>
-              </div>
-              <div>
-                <button className="text-sm underline mr-2">Edit</button>
-                <button className="text-sm underline">Delete</button>
-              </div>
+          <div key={p.id} className="bg-white border rounded p-3 mb-3 flex justify-between">
+            <div>
+              <div className="font-semibold">{p.title}</div>
+              <div className="text-sm text-gray-600">{p.city}</div>
+            </div>
+            <div className="space-x-2">
+              <button className="text-sm underline">Edit</button>
+              <button className="text-sm underline">Delete</button>
             </div>
           </div>
         ))}
