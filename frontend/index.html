@@ -1,12 +1,219 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Commercial Property Rental — Frontend (Clean)</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Commercial Property — 4-Floor Building for Lease</title>
+  <style>
+    :root{
+      --bg:#f5f7fb; --card:#ffffff; --accent:#0f6fbd; --muted:#6b7280;
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, Arial, sans-serif; margin:0; background:var(--bg); color:#111}
+    .wrap{max-width:1100px;margin:32px auto;padding:24px}
+    .card{background:var(--card);border-radius:12px;padding:20px;box-shadow:0 6px 18px rgba(16,24,40,0.06)}
+    header{display:flex;gap:20px;align-items:center}
+    .hero-img{flex:1;border-radius:8px;height:220px;background:linear-gradient(135deg,#e6f0fb,#f7fbff);display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:600}
+    .title{flex:2}
+    h1{margin:0;font-size:22px}
+    .meta{color:var(--muted);margin-top:6px}
+
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:20px;margin-top:20px}
+
+    /* left column */
+    .carousel{position:relative;border-radius:8px;overflow:hidden}
+    .carousel img{width:100%;display:block;height:320px;object-fit:cover}
+    .thumbs{display:flex;gap:8px;margin-top:8px}
+    .thumbs img{width:72px;height:56px;object-fit:cover;border-radius:6px;cursor:pointer;opacity:.85}
+
+    .section{margin-top:18px}
+    .features{display:flex;flex-wrap:wrap;gap:12px}
+    .feature{background:#f3f6fb;padding:10px 12px;border-radius:8px;font-size:14px;color:#111}
+
+    /* floor plans */
+    .floors{margin-top:14px}
+    .tabs{display:flex;gap:8px}
+    .tab{padding:8px 12px;border-radius:8px;background:#eef6ff;cursor:pointer}
+    .tab.active{background:var(--accent);color:#fff}
+    .floor-card{background:#fff;border-radius:8px;padding:12px;margin-top:12px;box-shadow:0 4px 12px rgba(16,24,40,0.04)}
+    .floor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+    /* right column */
+    aside{position:relative}
+    .price{font-size:20px;color:var(--accent);font-weight:700}
+    .specs{margin-top:12px;color:var(--muted)}
+    .cta{display:inline-block;margin-top:14px;padding:12px 16px;border-radius:10px;background:var(--accent);color:#fff;text-decoration:none}
+
+    form{display:grid;gap:10px;margin-top:12px}
+    input,textarea,select{padding:10px;border-radius:8px;border:1px solid #e6eef7}
+    button{padding:10px;border-radius:8px;border:0;background:#0b5fa8;color:#fff}
+
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+
+    @media (max-width:900px){.grid{grid-template-columns:1fr}.hero-img{height:140px}.carousel img{height:200px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="hero-img">Main frontage / building image</div>
+        <div class="title">
+          <h1>Prime 4-Floor Commercial Building — Downtown Business District</h1>
+          <div class="meta">Total rentable area: 3,200 m² • Zoning: Mixed Commercial (B2) • Available: Immediate</div>
+        </div>
+      </header>
+
+      <div class="grid">
+        <main>
+          <div class="carousel" id="carousel">
+            <img id="mainPhoto" src="https://via.placeholder.com/1000x600?text=Building+Exterior" alt="Building exterior">
+            <div class="thumbs" id="thumbs">
+              <img src="https://via.placeholder.com/200x120?text=Exterior+1" data-src="https://via.placeholder.com/1000x600?text=Building+Exterior" alt="thumb">
+              <img src="https://via.placeholder.com/200x120?text=Lobby" data-src="https://via.placeholder.com/1000x600?text=Lobby" alt="thumb">
+              <img src="https://via.placeholder.com/200x120?text=Typical+Floor" data-src="https://via.placeholder.com/1000x600?text=Typical+Floor" alt="thumb">
+              <img src="https://via.placeholder.com/200x120?text=Rooftop" data-src="https://via.placeholder.com/1000x600?text=Rooftop" alt="thumb">
+            </div>
+          </div>
+
+          <section class="section">
+            <h3>Building overview</h3>
+            <p class="muted">Well-maintained 4-storey building with flexible floor plates suitable for offices, showrooms, light industrial or co-working. Freight elevator and dedicated loading bay on ground level.</p>
+            <div class="features">
+              <div class="feature">Freight elevator (2,000 kg)</div>
+              <div class="feature">Rooftop HVAC zones</div>
+              <div class="feature">Dedicated loading dock</div>
+              <div class="feature">24/7 access & security</div>
+              <div class="feature">Secure underground parking</div>
+            </div>
+          </section>
+
+          <section class="section floors">
+            <h3>Floor plans & availability</h3>
+            <div class="tabs" role="tablist" aria-label="Floor selector">
+              <button class="tab active" data-floor="1">Ground / Floor 1</button>
+              <button class="tab" data-floor="2">Floor 2</button>
+              <button class="tab" data-floor="3">Floor 3</button>
+              <button class="tab" data-floor="4">Floor 4</button>
+            </div>
+
+            <div id="floorDetails">
+              <!-- Floor details injected by JS -->
+            </div>
+          </section>
+
+          <section class="section">
+            <h3>Location & transport</h3>
+            <p class="muted">Situated on a major thoroughfare with excellent tram and metro connections. Multiple bus routes and direct access to the ring road within 5 minutes.</p>
+            <div style="width:100%;height:220px;background:#eef6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted)">Map placeholder (embed your map here)</div>
+          </section>
+
+        </main>
+
+        <aside>
+          <div class="card" style="padding:16px">
+            <div class="price">€45 / m² / month</div>
+            <div class="specs">Negotiable lease term • Triple-net & maintenance options available</div>
+
+            <a class="cta" href="mailto:leasing@brokerexample.com?subject=Interest%20in%204-floor%20commercial%20building">Contact Leasing</a>
+
+            <div class="section">
+              <h4>Quick specs</h4>
+              <ul class="specs">
+                <li>Building area: 3,200 m² (approx.)</li>
+                <li>Typical floor plate: 800 m²</li>
+                <li>Ceiling height: 3.6 m (typ.)</li>
+                <li>Power: 400V three-phase</li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h4>Request information / schedule viewing</h4>
+              <form onsubmit="submitForm(event)">
+                <input required type="text" id="name" placeholder="Full name">
+                <input required type="email" id="email" placeholder="Email">
+                <input type="tel" id="phone" placeholder="Phone (optional)">
+                <select id="intent">
+                  <option>Request brochure</option>
+                  <option>Schedule a viewing</option>
+                  <option>Discuss lease terms</option>
+                </select>
+                <textarea id="msg" rows="3" placeholder="Message (optional)"></textarea>
+                <button type="submit">Send enquiry</button>
+              </form>
+              <div id="formMsg" style="margin-top:8px;color:var(--muted);font-size:13px"></div>
+            </div>
+
+          </div>
+        </aside>
+
+      </div>
+
+      <footer>
+        <div>Listing agent: Central Commercial Realty • Tel: +31 20 555 0123 • VAT/Company ID available on request</div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // Thumbnail click -> change main photo
+    document.getElementById('thumbs').addEventListener('click', function(e){
+      if(e.target.tagName === 'IMG'){
+        document.getElementById('mainPhoto').src = e.target.dataset.src || e.target.src;
+      }
+    });
+
+    // Floor data
+    const floors = {
+      1: {title:'Ground / Floor 1 — Retail / Showroom', area:'900 m²', availability:'Available', notes:['High ceiling (4.5 m)','Direct street access','Loading bay & roll-up door']},
+      2: {title:'Floor 2 — Open-plan offices', area:'800 m²', availability:'Partially available', notes:['Raised floors','Plenty of natural light','Two passenger lifts']},
+      3: {title:'Floor 3 — Offices / Labs', area:'800 m²', availability:'Available from Jan 2026', notes:['Dedicated HVAC zones','Fume extraction capability']},
+      4: {title:'Floor 4 — Executive offices / Showroom', area:'700 m²', availability:'Available', notes:['Access to rooftop terrace','Panoramic views']}
+    };
+
+    function renderFloor(n){
+      const f = floors[n];
+      const container = document.getElementById('floorDetails');
+      container.innerHTML = `
+        <div class=\"floor-card\">
+          <div style=\"display:flex;justify-content:space-between;align-items:center\">
+            <strong>${f.title}</strong>
+            <span style=\"color:var(--muted)\">${f.area} • ${f.availability}</span>
+          </div>
+          <div style=\"margin-top:10px;display:flex;gap:12px;align-items:flex-start\">
+            <div style=\"flex:1\">
+              <p style=\"margin:0;color:var(--muted)\">${f.notes.join(' • ')}</p>
+              <div style=\"margin-top:10px;\">
+                <a href=\"mailto:leasing@brokerexample.com?subject=Enquiry%20Floor%20${n}\" class=\"cta\" style=\"display:inline-block;padding:8px 12px;font-size:14px;text-decoration:none;margin-right:8px\">Enquire about this floor</a>
+                <a href=\"#\" onclick=\"alert('Floor plan download placeholder')\" style=\"padding:8px 12px;border-radius:8px;background:#eef6ff;text-decoration:none;color:#0b5fa8\">Download floor plan</a>
+              </div>
+            </div>
+            <div style=\"width:180px;height:120px;background:#f7fbff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted)\">Floor ${n} plan image</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // init
+    renderFloor(1);
+    document.querySelectorAll('.tab').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        btn.classList.add('active');
+        renderFloor(btn.dataset.floor);
+      });
+    });
+
+    // form handler (simple client-side demo)
+    function submitForm(e){
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const intent = document.getElementById('intent').value;
+      document.getElementById('formMsg').textContent = `Thanks ${name || ''}! Your request ("${intent}") has been recorded — the agent will contact ${email} shortly.`;
+      // In production, post this to your server or open mailto link
+    }
+  </script>
+</body>
 </html>
+
