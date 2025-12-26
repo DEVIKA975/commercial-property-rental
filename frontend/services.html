@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services | ARKA Realty</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary-navy: #0F172A;
+            --secondary-navy: #1E293B;
+            --accent-gold: #C5A059;       
+            --accent-gold-hover: #b08d4b; 
+            --text-dark: #1E293B;
+            --text-gray: #64748B;
+            --text-light-gray: #94A3B8;
+            --bg-light: #F8FAFC;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; color: var(--text-dark); background-color: var(--bg-light); line-height: 1.6; }
+        h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+
+        /* --- HEADER & NAVIGATION --- */
+        header { background: var(--white); height: 90px; padding: 0 5%; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; }
+        .logo { width: 200px; height: 100%; display: flex; align-items: center; position: relative; }
+        .logo-img { position: absolute; height: 170px; width: auto; mix-blend-mode: multiply; }
+        nav { width: 50%; }
+        nav ul { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        nav a { font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 500; color: var(--text-dark); position: relative; padding-bottom: 5px; transition: all 0.3s ease; display: inline-block; }
+        nav a::after { content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 2px; background-color: var(--accent-gold); transition: width 0.3s ease; }
+        nav a:hover::after, nav a.active::after { width: 100%; }
+        nav a:hover { color: var(--primary-navy); transform: scale(1.15); text-shadow: 0 0 .5px var(--primary-navy); }
+        nav a.active { color: var(--primary-navy); font-weight: 700; transform: none; }
+        .menu-toggle { display: none; font-size: 1.5rem; color: var(--primary-navy); cursor: pointer; z-index: 1001; }
+
+        /* --- SERVICES HERO --- */
+        .services-hero { position: relative; height: 50vh; min-height: 400px; background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; text-align: center; margin-top: 90px; }
+        .hero-content h1 { color: var(--white); font-size: 3rem; margin-bottom: 1rem; }
+        .hero-content p { color: var(--white); font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto; font-weight: 300; }
+
+        /* --- MAIN SERVICES --- */
+        .services-main { padding: 5rem 5%; max-width: 1200px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-header h2 { font-size: 2.5rem; color: var(--primary-navy); margin-bottom: 0.5rem; }
+        .section-header p { color: var(--text-gray); }
+        .service-grid-detailed { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; }
+        .service-box { background: var(--white); padding: 2.5rem; border-radius: 8px; box-shadow: var(--shadow-sm); transition: 0.3s; border: 1px solid #eee; position: relative; overflow: hidden; }
+        .service-box:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); border-color: var(--accent-gold); }
+        .service-box::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 3px; background: var(--accent-gold); transition: 0.3s; }
+        .service-box:hover::before { width: 100%; }
+        .icon-wrapper { width: 60px; height: 60px; background: rgba(197, 160, 89, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--accent-gold); font-size: 1.5rem; }
+        .service-box h3 { font-size: 1.5rem; color: var(--primary-navy); margin-bottom: 1rem; }
+        .service-box p { color: var(--text-gray); font-size: 0.95rem; margin-bottom: 1.5rem; }
+        .service-list li { display: flex; align-items: flex-start; gap: 10px; color: var(--text-dark); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .service-list i { color: var(--accent-gold); margin-top: 5px; font-size: 0.8rem; }
+
+        /* --- PROCESS --- */
+        .process-section { background-color: var(--primary-navy); padding: 5rem 5%; color: var(--white); }
+        .process-container { max-width: 1200px; margin: 0 auto; }
+        .process-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin-top: 3rem; text-align: center; }
+        .step-item { position: relative; padding: 1rem; }
+        .step-number { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--accent-gold); opacity: 0.3; position: absolute; top: -20px; left: 50%; transform: translateX(-50%); z-index: 0; }
+        .step-icon { font-size: 2rem; margin-bottom: 1rem; position: relative; z-index: 1; color: var(--white); }
+        .step-item h4 { font-family: 'Inter', sans-serif; font-size: 1.2rem; margin-bottom: 0.5rem; font-weight: 600; }
+        .step-item p { font-size: 0.9rem; color: var(--text-light-gray); line-height: 1.5; }
+
+        /* --- CTA --- */
+        .cta-strip { background: var(--accent-gold); padding: 3rem 5%; text-align: center; color: var(--white); }
+        .cta-strip h2 { font-family: 'Inter', sans-serif; font-size: 2rem; margin-bottom: 1rem; }
+        .btn-navy { background: var(--primary-navy); color: var(--white); padding: 0.8rem 2rem; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; margin-top: 1rem; }
+        .btn-navy:hover { background: var(--secondary-navy); }
+
+        /* --- FOOTER --- */
+        footer { background-color: var(--primary-navy); color: var(--white); padding: 3rem 5% 1rem; }
+        .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .footer-col h4 { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--white); }
+        .footer-text { color: var(--text-light-gray); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.8; }
+        .footer-logo { display: flex; align-items: center; margin-bottom: 0.5rem; }
+        .footer-logo-img { height: 170px; width: auto; margin-top: -30px; }
+        .social-links { display: flex; gap: 1rem; }
+        .social-links a { width: 36px; height: 36px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--white); }
+        .social-links a:hover { background: var(--accent-gold); }
+        .footer-links li { margin-bottom: 0.8rem; }
+        .footer-links a { color: var(--text-light-gray); font-size: 0.95rem; }
+        .footer-links a:hover { color: var(--accent-gold); padding-left: 5px; }
+        .subscribe-form { display: flex; gap: 10px; margin-top: 1rem; }
+        .subscribe-input { flex: 1; padding: 0.8rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: var(--white); }
+        .subscribe-input::placeholder { color: var(--text-light-gray); }
+        .subscribe-btn { background: var(--accent-gold); color: var(--white); border: none; padding: 0 1.5rem; border-radius: 4px; cursor: pointer; font-weight: 600; }
+        .subscribe-btn:hover { background: var(--accent-gold-hover); }
+        .footer-bottom { padding-top: 1.5rem; text-align: center; color: var(--text-light-gray); font-size: 0.9rem; display: flex; justify-content: space-between; max-width: 1200px; margin: 0 auto; }
+        .footer-legal { display: flex; gap: 2rem; }
+        .footer-legal a { cursor: pointer; color: var(--text-light-gray); text-decoration: none; transition: 0.3s; }
+        .footer-legal a:hover { color: var(--accent-gold); }
+
+        /* --- POPUP MODAL --- */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+        .modal-content { background-color: var(--white); margin: 10% auto; padding: 2.5rem; border: 1px solid #888; width: 80%; max-width: 700px; border-radius: 8px; box-shadow: var(--shadow-lg); position: relative; animation: slideDown 0.3s ease-out; }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .close-btn:hover, .close-btn:focus { color: var(--primary-navy); text-decoration: none; cursor: pointer; }
+        .modal h2 { margin-top: 0; color: var(--primary-navy); border-bottom: 2px solid var(--accent-gold); padding-bottom: 10px; margin-bottom: 20px; }
+        .modal-body { max-height: 60vh; overflow-y: auto; color: var(--text-gray); font-size: 0.95rem; line-height: 1.8; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .menu-toggle { display: block; }
+            nav { position: absolute; top: 100%; left: 0; width: 100%; background: var(--white); padding: 1rem 0; box-shadow: var(--shadow-lg); display: none; flex-direction: column; align-items: center; }
+            nav.active { display: flex; }
+            nav ul { flex-direction: column; gap: 1.5rem; }
+            .process-steps { grid-template-columns: 1fr 1fr; gap: 3rem; }
+            .footer-container { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .process-steps { grid-template-columns: 1fr; }
+            .footer-container { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 1rem; }
+            .modal-content { width: 90%; margin: 20% auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <img src="images/ArkaMainFrontElevation.PNG" alt="ARKA Realty" class="logo-img">
+        </div>
+        
+        <div class="menu-toggle" id="mobile-menu">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <nav id="navbar">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="properties.html">Properties</a></li>
+                <li><a href="services.html" class="active">Services</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="services-hero">
+        <div class="hero-content">
+            <h1>Comprehensive Real Estate Solutions</h1>
+            <p>From strategic leasing to asset management, we provide the expertise to maximize value for every square foot.</p>
+        </div>
+    </section>
+
+    <section class="services-main">
+        <div class="section-header">
+            <h2>Our Expertise</h2>
+            <p>Tailored services for tenants, investors, and property owners.</p>
+        </div>
+
+        <div class="service-grid-detailed">
+            <div class="service-box">
+                <div class="icon-wrapper"><i class="fas fa-handshake"></i></div>
+                <h3>Tenant Representation</h3>
+                <p>We help businesses find the perfect space. We analyze your needs, scout locations, and negotiate terms that favor your bottom line.</p>
+                <ul class="service-list">
+                    <li><i class="fas fa-check"></i> Site Selection & Analysis</li>
+                    <li><i class="fas fa-check"></i> Lease Negotiation</li>
+                    <li><i class="fas fa-check"></i> Workplace Strategy</li>
+                </ul>
+            </div>
+
+            <div class="service-box">
+                <div class="icon-wrapper"><i class="fas fa-building"></i></div>
+                <h3>Landlord Representation</h3>
+                <p>Maximize occupancy and rental rates. We position your asset strategically in the market to attract high-quality tenants.</p>
+                <ul class="service-list">
+                    <li><i class="fas fa-check"></i> Strategic Marketing</li>
+                    <li><i class="fas fa-check"></i> Tenant Retention Plans</li>
+                    <li><i class="fas fa-check"></i> Asset Positioning</li>
+                </ul>
+            </div>
+
+            <div class="service-box">
+                <div class="icon-wrapper"><i class="fas fa-chart-line"></i></div>
+                <h3>Investment Sales</h3>
+                <p>Whether buying or selling, we provide deep market intelligence to ensure your capital goes further and returns are maximized.</p>
+                <ul class="service-list">
+                    <li><i class="fas fa-check"></i> Acquisition & Disposition</li>
+                    <li><i class="fas fa-check"></i> Financial Modeling</li>
+                    <li><i class="fas fa-check"></i> Due Diligence Support</li>
+                </ul>
+            </div>
+
+            <div class="service-box">
+                <div class="icon-wrapper"><i class="fas fa-tools"></i></div>
+                <h3>Property Management</h3>
+                <p>Hands-on management to ensure your property operates efficiently, stays compliant, and maintains its value over time.</p>
+                <ul class="service-list">
+                    <li><i class="fas fa-check"></i> Operations & Maintenance</li>
+                    <li><i class="fas fa-check"></i> Financial Reporting</li>
+                    <li><i class="fas fa-check"></i> Tenant Relations</li>
+                </ul>
+            </div>
+
+            <div class="service-box">
+                <div class="icon-wrapper"><i class="fas fa-search-dollar"></i></div>
+                <h3>Valuation & Advisory</h3>
+                <p>Accurate, data-driven valuations to help you make informed decisions about your real estate portfolio.</p>
+                <ul class="service-list">
+                    <li><i class="fas fa-check"></i> Market Feasibility Studies</li>
+                    <li><i class="fas fa-check"></i> Portfolio Optimization</li>
+                    <li><i class="fas fa-check"></i> Asset Valuation</li>
+                </ul>
+            </div>
+
+            <div class="service-box">
+                <div class="icon-wrapper"><i class="fas fa-hard-hat"></i></div>
+                <h3>Project Management</h3>
+                <p>Overseeing fit-outs and renovations to ensure projects are delivered on time, on budget, and to the highest quality.</p>
+                <ul class="service-list">
+                    <li><i class="fas fa-check"></i> Design Oversight</li>
+                    <li><i class="fas fa-check"></i> Contractor Management</li>
+                    <li><i class="fas fa-check"></i> Cost Control</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="process-section">
+        <div class="process-container">
+            <div class="section-header" style="margin-bottom: 2rem;">
+                <h2 style="color: var(--white);">The ARKA Approach</h2>
+                <p style="color: var(--text-light-gray);">How we deliver consistent results.</p>
+            </div>
+            
+            <div class="process-steps">
+                <div class="step-item">
+                    <div class="step-number">01</div>
+                    <div class="step-icon"><i class="fas fa-comments"></i></div>
+                    <h4>Consultation</h4>
+                    <p>We listen to your goals, operational needs, and financial constraints to understand the big picture.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">02</div>
+                    <div class="step-icon"><i class="fas fa-chess-board"></i></div>
+                    <h4>Strategy</h4>
+                    <p>We leverage market data to build a custom roadmap tailored to your specific objectives.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">03</div>
+                    <div class="step-icon"><i class="fas fa-file-signature"></i></div>
+                    <h4>Execution</h4>
+                    <p>We handle negotiations, paperwork, and logistics with precision and transparency.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">04</div>
+                    <div class="step-icon"><i class="fas fa-infinity"></i></div>
+                    <h4>Management</h4>
+                    <p>Our relationship continues post-transaction with ongoing support and asset management.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-strip">
+        <h2>Ready to optimize your real estate strategy?</h2>
+        <a href="index.html#contact" class="btn-navy">Schedule a Consultation</a>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="images/Arkafooter.png" alt="ARKA Realty" class="footer-logo-img">
+                </div>
+                <p class="footer-text">
+                    Redefining commercial real estate with a fresh, modern approach. Connecting businesses with exceptional spaces.
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Properties</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Office Spaces</a></li>
+                    <li><a href="#">Retail Stores</a></li>
+                    <li><a href="#">Industrial</a></li>
+                    <li><a href="#">New Projects</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Leasing</a></li>
+                    <li><a href="#">Management</a></li>
+                    <li><a href="#">Consultancy</a></li>
+                    <li><a href="#">Valuation</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Subscribe</h4>
+                <p class="footer-text">Get the latest market insights and property updates.</p>
+                <form class="subscribe-form">
+                    <input type="email" class="subscribe-input" placeholder="Your email">
+                    <button class="subscribe-btn">Go</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 Arka Realty. All Rights Reserved.</p>
+            <div class="footer-legal">
+                <a onclick="openModal('privacy')">Privacy Policy</a>
+                <a onclick="openModal('terms')">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="legalModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Modal Title</h2>
+            <div id="modalBody" class="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+    const mobileMenuBtn = document.getElementById('mobile-menu');
+    const navbar = document.getElementById('navbar');
+
+    mobileMenuBtn.addEventListener('click', () => {
+        navbar.classList.toggle('active');
+        const icon = mobileMenuBtn.querySelector('i');
+        if (navbar.classList.contains('active')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+        } else {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        }
+    });
+
+    // --- MODAL LOGIC ---
+    const modal = document.getElementById("legalModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+
+    const contentData = {
+        privacy: {
+            title: "Privacy Policy",
+            body: "<p>Your privacy is important to us. This policy outlines how we collect, use, and protect your personal information.</p><br><strong>1. Information Collection</strong><br>We collect information you provide directly to us, such as when you fill out a form or contact us via email.</p><br><strong>2. Use of Information</strong><br>We use the information to provide, maintain, and improve our services, including responding to your inquiries.</p><br><strong>3. Data Security</strong><br>We implement security measures to ensure your data is protected against unauthorized access.</p>"
+        },
+        terms: {
+            title: "Terms of Service",
+            body: "<p>Welcome to ARKA Realty. By accessing our website, you agree to be bound by these terms of service.</p><br><strong>1. Services</strong><br>ARKA Realty provides commercial real estate listings and management services. Information on this site is for general purpose only.</p><br><strong>2. User Conduct</strong><br>You agree not to use the website for any unlawful purpose or to solicit others to perform or participate in any unlawful acts.</p><br><strong>3. Limitation of Liability</strong><br>ARKA Realty shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use of our services.</p>"
+        }
+    };
+
+    function openModal(type) {
+        if(contentData[type]) {
+            modalTitle.innerText = contentData[type].title;
+            modalBody.innerHTML = contentData[type].body;
+            modal.style.display = "block";
+        }
+    }
+
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
+    // Close if clicked outside
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    </script>
+</body>
+</html>

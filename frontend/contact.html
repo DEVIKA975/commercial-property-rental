@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | ARKA Realty</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary-navy: #0F172A;
+            --secondary-navy: #1E293B;
+            --accent-gold: #C5A059;       
+            --accent-gold-hover: #b08d4b; 
+            --text-dark: #1E293B;
+            --text-gray: #64748B;
+            --text-light-gray: #94A3B8;
+            --bg-light: #F8FAFC;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; color: var(--text-dark); background-color: var(--bg-light); line-height: 1.6; }
+        h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+
+        /* --- HEADER & NAVIGATION --- */
+        header {
+            background: var(--white);
+            height: 90px; 
+            padding: 0 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { width: 200px; height: 100%; display: flex; align-items: center; position: relative; }
+        .logo-img { position: absolute; height: 170px; width: auto; mix-blend-mode: multiply; }
+
+        nav { width: 50%; }
+        nav ul { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        
+        nav a { 
+            font-family: 'Inter', sans-serif; 
+            font-size: 1rem; 
+            font-weight: 500; 
+            color: var(--text-dark); 
+            position: relative; 
+            padding-bottom: 5px; 
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        /* Navigation Line Effect (Gold) */
+        nav a::after { 
+            content: ''; 
+            position: absolute; 
+            left: 0; 
+            bottom: 0; 
+            width: 0; 
+            height: 2px; 
+            background-color: var(--accent-gold); 
+            transition: width 0.3s ease; 
+        }
+
+        /* 1. Show Line on Hover OR Active */
+        nav a:hover::after, 
+        nav a.active::after { 
+            width: 100%; 
+        }
+
+        /* 2. HOVER EFFECT: Scale Up & Navy Blue */
+        nav a:hover { 
+            color: var(--primary-navy); 
+            transform: scale(1.15); 
+            text-shadow: 0 0 .5px var(--primary-navy); 
+        }
+
+        /* 3. ACTIVE PAGE EFFECT: Black/Navy Text, Gold Line, No Scale */
+        nav a.active { 
+            color: var(--primary-navy); /* Black (Navy) Text */
+            font-weight: 700; 
+            transform: none; /* Stays still */
+        }
+
+        .menu-toggle { display: none; font-size: 1.5rem; color: var(--primary-navy); cursor: pointer; z-index: 1001; }
+
+        /* --- CONTACT HERO --- */
+        .contact-hero {
+            background-color: var(--primary-navy);
+            padding: 9rem 5% 4rem; /* Top padding clears fixed header */
+            text-align: center;
+            color: var(--white);
+        }
+        .contact-hero h1 { font-size: 3rem; margin-bottom: 1rem; }
+        .contact-hero p { font-size: 1.1rem; color: var(--text-light-gray); max-width: 600px; margin: 0 auto; }
+
+        /* --- CONTACT CONTAINER (Grid) --- */
+        .contact-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 5%;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 4rem;
+        }
+
+        /* --- LEFT COLUMN: INFO --- */
+        .contact-info-box h3 { font-size: 1.8rem; color: var(--primary-navy); margin-bottom: 1.5rem; }
+        .contact-info-box p { margin-bottom: 2rem; color: var(--text-gray); }
+
+        .info-item { display: flex; gap: 15px; margin-bottom: 2rem; }
+        .info-icon {
+            width: 50px; height: 50px; background: rgba(197, 160, 89, 0.15);
+            color: var(--accent-gold); border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .info-content h5 { font-family: 'Inter', sans-serif; font-weight: 600; color: var(--primary-navy); margin-bottom: 0.2rem; }
+        .info-content p { font-size: 0.95rem; color: var(--text-gray); margin: 0; }
+
+        .social-connect h5 { font-family: 'Inter', sans-serif; font-weight: 600; margin-bottom: 1rem; color: var(--primary-navy); }
+        .social-icons-row { display: flex; gap: 1rem; }
+        .social-icons-row a {
+            width: 40px; height: 40px; border: 1px solid #ddd;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; color: var(--text-dark); transition: 0.3s;
+        }
+        .social-icons-row a:hover { background: var(--accent-gold); color: var(--white); border-color: var(--accent-gold); }
+
+        /* --- RIGHT COLUMN: FORM --- */
+        .contact-form-box {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            border-top: 5px solid var(--accent-gold);
+        }
+
+        .form-grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem; }
+        
+        .form-control {
+            width: 100%; padding: 0.8rem; border: 1px solid #ddd;
+            border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.95rem;
+            transition: 0.3s; background: #fdfdfd;
+        }
+        .form-control:focus { outline: none; border-color: var(--accent-gold); background: var(--white); }
+        textarea.form-control { resize: vertical; min-height: 120px; }
+
+        .btn-gold {
+            width: 100%; padding: 1rem; background: var(--accent-gold); color: var(--white);
+            border: none; border-radius: 4px; font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: background 0.3s; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .btn-gold:hover { background: var(--accent-gold-hover); }
+
+        /* --- MAP SECTION --- */
+        .map-section { height: 450px; width: 100%; background: #eee; }
+        .map-frame { width: 100%; height: 100%; border: 0; filter: grayscale(100%); transition: filter 0.5s; }
+        .map-frame:hover { filter: grayscale(0%); }
+
+        /* --- FOOTER --- */
+        footer { background-color: var(--primary-navy); color: var(--white); padding: 3rem 5% 1rem; }
+        .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .footer-col h4 { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--white); }
+        .footer-text { color: var(--text-light-gray); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.8; }
+        
+        .footer-logo { display: flex; align-items: center; margin-bottom: 0.5rem; }
+        .footer-logo-img { height: 170px; width: auto; padding: 0; border-radius: 4px; margin-top: -30px; }
+        
+        .social-links { display: flex; gap: 1rem; }
+        .social-links a { width: 36px; height: 36px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--white); }
+        .social-links a:hover { background: var(--accent-gold); }
+
+        .footer-links li { margin-bottom: 0.8rem; }
+        .footer-links a { color: var(--text-light-gray); font-size: 0.95rem; }
+        .footer-links a:hover { color: var(--accent-gold); padding-left: 5px; }
+        
+        .subscribe-form { display: flex; gap: 10px; margin-top: 1rem; }
+        .subscribe-input { flex: 1; padding: 0.8rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: var(--white); }
+        .subscribe-input::placeholder { color: var(--text-light-gray); }
+        .subscribe-btn { background: var(--accent-gold); color: var(--white); border: none; padding: 0 1.5rem; border-radius: 4px; cursor: pointer; font-weight: 600; }
+        .subscribe-btn:hover { background: var(--accent-gold-hover); }
+
+        .footer-bottom { padding-top: 1.5rem; text-align: center; color: var(--text-light-gray); font-size: 0.9rem; display: flex; justify-content: space-between; max-width: 1200px; margin: 0 auto; }
+        .footer-legal { display: flex; gap: 2rem; }
+        .footer-legal a { cursor: pointer; color: var(--text-light-gray); text-decoration: none; transition: 0.3s; }
+        .footer-legal a:hover { color: var(--accent-gold); }
+
+        /* --- POPUP MODAL --- */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+        .modal-content { background-color: var(--white); margin: 10% auto; padding: 2.5rem; border: 1px solid #888; width: 80%; max-width: 700px; border-radius: 8px; box-shadow: var(--shadow-lg); position: relative; animation: slideDown 0.3s ease-out; }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .close-btn:hover, .close-btn:focus { color: var(--primary-navy); text-decoration: none; cursor: pointer; }
+        .modal h2 { margin-top: 0; color: var(--primary-navy); border-bottom: 2px solid var(--accent-gold); padding-bottom: 10px; margin-bottom: 20px; }
+        .modal-body { max-height: 60vh; overflow-y: auto; color: var(--text-gray); font-size: 0.95rem; line-height: 1.8; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; }
+            .menu-toggle { display: block; }
+            
+            nav {
+                position: absolute;
+                top: 100%; /* Below header */
+                left: 0;
+                width: 100%;
+                background: var(--white);
+                padding: 1rem 0;
+                box-shadow: var(--shadow-lg);
+                display: none; 
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav.active { display: flex; }
+            nav ul { flex-direction: column; gap: 1.5rem; width: 100%; justify-content: center; }
+            nav a { display: block; padding: 0.5rem 2rem; font-size: 1.1rem; }
+            
+            .footer-container { grid-template-columns: 1fr 1fr; }
+            .form-grid-row { grid-template-columns: 1fr; gap: 0; }
+        }
+
+        @media (max-width: 600px) {
+            .footer-container { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 1rem; }
+            .modal-content { width: 90%; margin: 20% auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <img src="images/ArkaMainFrontElevation.PNG" alt="ARKA Realty" class="logo-img">
+        </div>
+        
+        <div class="menu-toggle" id="mobile-menu">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <nav id="navbar">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="properties.html">Properties</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="contact.html" class="active">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="contact-hero">
+        <h1>Get in Touch</h1>
+        <p>Whether you are looking to lease, buy, or invest, our team is here to guide you.</p>
+    </section>
+
+    <section class="contact-wrapper">
+        
+        <div class="contact-info-box">
+            <h3>Contact Information</h3>
+            <p>Reach out to us directly or visit our headquarters for a coffee and a consultation.</p>
+
+            <div class="info-item">
+                <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <div class="info-content">
+                    <h5>Headquarters</h5>
+                    <p>123 Business Avenue, Suite 400<br>Metropolis City, FC 54321</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon"><i class="fas fa-phone-alt"></i></div>
+                <div class="info-content">
+                    <h5>Phone</h5>
+                    <p>+1 (555) 123-4567<br>Mon - Fri, 9am - 6pm</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                <div class="info-content">
+                    <h5>Email</h5>
+                    <p>info@arkarealty.com<br>support@arkarealty.com</p>
+                </div>
+            </div>
+
+            <div class="social-connect">
+                <h5>Follow Us</h5>
+                <div class="social-icons-row">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-form-box">
+            <form id="contactPageForm">
+                <div class="form-grid-row">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" id="fname" class="form-control" placeholder="John" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" id="lname" class="form-control" placeholder="Doe" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-row">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="email" class="form-control" placeholder="john@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="phone" class="form-control" placeholder="+1 (555) 000-0000" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Subject</label>
+                    <select id="subject" class="form-control">
+                        <option>General Inquiry</option>
+                        <option>Leasing Information</option>
+                        <option>Property Management</option>
+                        <option>Investment Opportunities</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea id="message" class="form-control" placeholder="How can we help you?"></textarea>
+                </div>
+
+                <button type="submit" class="btn-gold">Send Message</button>
+                <div id="formMsg" style="margin-top:10px;font-size:0.9rem;"></div>
+            </form>
+        </div>
+    </section>
+
+    <section class="map-section">
+        <iframe class="map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.1422937950147!2d-73.98731968459391!3d40.75889497932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1646755498875!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="images/Arkafooter.png" alt="ARKA Realty" class="footer-logo-img">
+                </div>
+                <p class="footer-text">
+                    Redefining commercial real estate with a fresh, modern approach. Connecting businesses with exceptional spaces.
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Properties</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Office Spaces</a></li>
+                    <li><a href="#">Retail Stores</a></li>
+                    <li><a href="#">Industrial</a></li>
+                    <li><a href="#">New Projects</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Leasing</a></li>
+                    <li><a href="#">Management</a></li>
+                    <li><a href="#">Consultancy</a></li>
+                    <li><a href="#">Valuation</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Subscribe</h4>
+                <p class="footer-text">Get the latest market insights and property updates.</p>
+                <form class="subscribe-form">
+                    <input type="email" class="subscribe-input" placeholder="Your email">
+                    <button class="subscribe-btn">Go</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 Arka Realty. All Rights Reserved.</p>
+            <div class="footer-legal">
+                <a onclick="openModal('privacy')">Privacy Policy</a>
+                <a onclick="openModal('terms')">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="legalModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">×</span>
+            <h2 id="modalTitle">Modal Title</h2>
+            <div id="modalBody" class="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu');
+    const navbar = document.getElementById('navbar');
+
+    mobileMenuBtn.addEventListener('click', () => {
+        navbar.classList.toggle('active');
+        const icon = mobileMenuBtn.querySelector('i');
+        if (navbar.classList.contains('active')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+        } else {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        }
+    });
+
+    // Form Submission Logic
+    document.getElementById('contactPageForm').addEventListener('submit', async (e) => {
+      e.preventDefault(); 
+
+      const fname = document.getElementById('fname').value.trim();
+      const lname = document.getElementById('lname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const subject = document.getElementById('subject').value;
+      const messageText = document.getElementById('message').value;
+      const formMsg = document.getElementById('formMsg');
+
+      formMsg.textContent = "Sending message...";
+      formMsg.style.color = "#64748B";
+
+      const fullMessage = `
+    Name: ${fname} ${lname}
+    Email: ${email}
+    Phone: ${phone}
+    Subject: ${subject}
+    Message: ${messageText}
+    Source: Contact Page
+      `;
+
+      const payload = {
+        to: "arkatest2025@outlook.com",
+        subject: `Contact Page: ${subject}`,
+        message: fullMessage,
+        // Optional: include fields if your server logic uses them
+        name: `${fname} ${lname}`,
+        email: email,
+        phone: phone,
+        interest: subject
+      };
+
+      try {
+        const response = await fetch(
+          (window.__API_BASE__ || "http://localhost:4000") + "/send-email",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          }
+        );
+
+        if (response.ok) {
+          formMsg.style.color = "#15803D"; 
+          formMsg.textContent = "Message sent successfully! We will get back to you soon.";
+          document.getElementById('contactPageForm').reset();
+        } else {
+          throw new Error("Server error");
+        }
+      } catch (err) {
+        console.error(err);
+        formMsg.style.color = "#B91C1C"; 
+        formMsg.textContent = "Failed to send message. Please try again later.";
+      }
+    });
+
+    // --- MODAL LOGIC ---
+    const modal = document.getElementById("legalModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+
+    const contentData = {
+        privacy: {
+            title: "Privacy Policy",
+            body: "<p>Your privacy is important to us. This policy outlines how we collect, use, and protect your personal information.</p><br><strong>1. Information Collection</strong><br>We collect information you provide directly to us, such as when you fill out a form or contact us via email.</p><br><strong>2. Use of Information</strong><br>We use the information to provide, maintain, and improve our services, including responding to your inquiries.</p><br><strong>3. Data Security</strong><br>We implement security measures to ensure your data is protected against unauthorized access.</p>"
+        },
+        terms: {
+            title: "Terms of Service",
+            body: "<p>Welcome to ARKA Realty. By accessing our website, you agree to be bound by these terms of service.</p><br><strong>1. Services</strong><br>ARKA Realty provides commercial real estate listings and management services. Information on this site is for general purpose only.</p><br><strong>2. User Conduct</strong><br>You agree not to use the website for any unlawful purpose or to solicit others to perform or participate in any unlawful acts.</p><br><strong>3. Limitation of Liability</strong><br>ARKA Realty shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use of our services.</p>"
+        }
+    };
+
+    function openModal(type) {
+        if(contentData[type]) {
+            modalTitle.innerText = contentData[type].title;
+            modalBody.innerHTML = contentData[type].body;
+            modal.style.display = "block";
+        }
+    }
+
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
+    // Close if clicked outside
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    </script>
+</body>
+</html>

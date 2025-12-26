@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Properties | ARKA Realty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root { --primary: #0F172A; --gold: #C5A059; --bg: #F8FAFC; --white: #ffffff; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; color: #334155; }
+        
+        /* HEADER */
+        header { background: var(--white); padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--primary); text-decoration:none;}
+        nav a { text-decoration: none; color: #334155; margin-left: 2rem; font-weight: 500; transition: 0.3s; }
+        nav a:hover { color: var(--gold); }
+
+        /* GRID */
+        .container { max-width: 1200px; margin: 4rem auto; padding: 0 20px; }
+        .page-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; text-align: center; color: var(--primary); margin-bottom: 3rem; }
+        
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        /* CARD STYLE */
+        .property-card {
+            background: var(--white); border-radius: 12px; overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: transform 0.3s ease; position: relative;
+        }
+        .property-card:hover { transform: translateY(-5px); }
+        
+        .prop-image { width: 100%; height: 250px; object-fit: cover; background-color: #eee; }
+        
+        .card-tag { position: absolute; top: 15px; left: 15px; background: var(--primary); color: var(--white); padding: 0.3rem 0.8rem; font-size: 0.75rem; font-weight: 600; border-radius: 2px; text-transform: uppercase; }
+
+        .prop-details { padding: 1.5rem; }
+        .prop-price { color: var(--gold); font-weight: 700; font-size: 1.25rem; margin-bottom: 0.5rem; display: block; }
+        .prop-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--primary); margin: 0 0 0.5rem 0; }
+        .prop-location { color: #64748B; font-size: 0.9rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 5px; }
+        
+        .prop-desc { 
+            color: #475569; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; 
+            display: -webkit-box; 
+            -webkit-line-clamp: 3; 
+            line-clamp: 3; /* Fixed CSS compatibility warning */
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+        }
+        
+        .btn-view {
+            display: inline-block; width: 100%; text-align: center;
+            padding: 1rem; background: var(--primary); color: white;
+            text-decoration: none; font-weight: 600; border-radius: 6px;
+            transition: background 0.3s;
+        }
+        .btn-view:hover { background: #1E293B; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">ARKA.</a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="properties.html" style="color: var(--gold);">Properties</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">Exclusive Listings</h1>
+        
+        <div class="property-grid" id="propertyList">
+            <p style="text-align:center; width:100%; grid-column:1/-1;">Loading properties...</p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:4000";
+
+        async function loadProperties() {
+            const container = document.getElementById('propertyList');
+            try {
+                const response = await fetch(`${API_URL}/api/properties`);
+                const data = await response.json();
+
+                if(data.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; width:100%; grid-column:1/-1;">No properties listed yet.</p>';
+                    return;
+                }
+
+                container.innerHTML = data.map(item => `
+                    <div class="property-card">
+                        <div style="position:relative;">
+                            <img src="${item.imageUrl}" alt="${item.title}" class="prop-image" onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
+                            ${item.tag ? `<span class="card-tag">${item.tag}</span>` : ''}
+                        </div>
+                        <div class="prop-details">
+                            <span class="prop-price">${item.price}</span>
+                            <h3 class="prop-title">${item.title}</h3>
+                            <div class="prop-location"><i class="fas fa-map-marker-alt"></i> ${item.location}</div>
+                            <p class="prop-desc">${item.description}</p>
+                            <a href="contact.html" class="btn-view">Enquire Now</a>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p style="text-align:center; width:100%; color:red;">Failed to load properties. Is server running?</p>';
+            }
+        }
+
+        loadProperties();
+    </script>
+</body>
+</html>
