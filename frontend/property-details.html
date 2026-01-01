@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Property Details | ARKA Realty</title>
+  
+  <script>
+      window.__API_BASE__ = 'http://localhost:4000'; 
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <style>
+    /* ================= COMMON STYLES ================= */
+    :root { 
+        --primary-navy: #0F172A; 
+        --secondary-navy: #1E293B; 
+        --accent-gold: #C5A059; 
+        --accent-gold-hover: #b08d4b; 
+        --text-dark: #1E293B; 
+        --text-gray: #64748B; 
+        --text-light-gray: #94A3B8; 
+        --bg-light: #F8FAFC; 
+        --white: #ffffff; 
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.1); 
+        --shadow-lg: 0 10px 30px rgba(0,0,0,0.15); 
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; color: var(--text-dark); background-color: var(--bg-light); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+    h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+    a { text-decoration: none; color: inherit; transition: 0.3s; }
+    ul { list-style: none; }
+
+    /* --- HEADER --- */
+    header { background: var(--white); height: 90px; padding: 0 5%; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; }
+    .logo { width: 200px; height: 100%; display: flex; align-items: center; position: relative; }
+    .logo-img { position: absolute; height: 170px; width: auto; mix-blend-mode: multiply; }
+    nav { width: 50%; }
+    nav ul { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+    nav a { font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 500; color: var(--text-dark); position: relative; padding-bottom: 5px; transition: all 0.3s ease; display: inline-block; }
+    nav a::after { content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 2px; background-color: var(--accent-gold); transition: width 0.3s ease; }
+    nav a:hover::after, nav a.active::after { width: 100%; }
+    nav a:hover { color: var(--primary-navy); transform: scale(1.15); text-shadow: 0 0 .5px var(--primary-navy); }
+    nav a.active { color: var(--primary-navy); font-weight: 700; transform: none; }
+    .menu-toggle { display: none; font-size: 1.5rem; color: var(--primary-navy); cursor: pointer; z-index: 1001; }
+
+    /* --- FOOTER --- */
+    footer { background-color: var(--primary-navy); color: var(--white); padding: 3rem 5% 1rem; margin-top: auto; }
+    .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .footer-col h4 { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--white); }
+    .footer-text { color: var(--text-light-gray); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.8; }
+    .footer-logo { display: flex; align-items: center; margin-bottom: 0.5rem; }
+    .footer-logo-img { height: 170px; width: auto; margin-top: -30px; }
+    .social-links { display: flex; gap: 1rem; }
+    .social-links a { width: 36px; height: 36px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--white); }
+    .social-links a:hover { background: var(--accent-gold); }
+    .footer-links li { margin-bottom: 0.8rem; }
+    .footer-links a { color: var(--text-light-gray); font-size: 0.95rem; }
+    .footer-links a:hover { color: var(--accent-gold); padding-left: 5px; }
+    .subscribe-form { display: flex; gap: 10px; margin-top: 1rem; }
+    .subscribe-input { flex: 1; padding: 0.8rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: var(--white); }
+    .subscribe-btn { background: var(--accent-gold); color: var(--white); border: none; padding: 0 1.5rem; border-radius: 4px; cursor: pointer; font-weight: 600; }
+    .subscribe-btn:hover { background: var(--accent-gold-hover); }
+    .footer-bottom { padding-top: 1.5rem; text-align: center; color: var(--text-light-gray); font-size: 0.9rem; display: flex; justify-content: space-between; max-width: 1200px; margin: 0 auto; }
+    .footer-legal { display: flex; gap: 2rem; }
+    .footer-legal a { cursor: pointer; color: var(--text-light-gray); text-decoration: none; transition: 0.3s; }
+    .footer-legal a:hover { color: var(--accent-gold); }
+
+    /* ================= DETAILS SPECIFIC STYLES ================= */
+    .content-wrapper { margin-top: 110px; margin-bottom: 60px; padding: 0 5%; width: 100%; flex: 1; }
+    .container-details { max-width: 1200px; margin: 0 auto; background: var(--white); border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+
+    .back-btn { display: inline-flex; align-items: center; gap: 8px; color: var(--text-gray); font-weight: 500; margin-bottom: 20px; text-decoration: none; }
+    .back-btn:hover { color: var(--accent-gold); }
+
+    /* Header Area */
+    .prop-header { border-bottom: 1px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 30px; }
+    .title-area h1 { font-size: 2.2rem; color: var(--primary-navy); margin-bottom: 5px; line-height: 1.2; }
+    .prop-location { font-size: 1.1rem; color: var(--text-gray); display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
+    .tag { padding: 5px 12px; background: #eef6ff; color: var(--primary-navy); border-radius: 4px; font-size: 0.85rem; font-weight: 600; margin-right: 10px; }
+    .tag.primary { background: var(--primary-navy); color: #fff; }
+    .tag.category { background: var(--accent-gold); color: #fff; }
+
+    /* Layout Grid */
+    .detail-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; }
+
+    /* Slideshow Container */
+    .media-container { width: 100%; height: 500px; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 30px; position: relative; }
+    .slider-wrapper { width: 100%; height: 100%; position: relative; }
+    .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.5s ease-in-out; display: flex; justify-content: center; align-items: center; }
+    .slide.active { opacity: 1; z-index: 1; }
+    .slide img, .slide video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+    
+    .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; padding: 15px; cursor: pointer; z-index: 10; font-size: 1.2rem; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+    .slider-arrow:hover { background: var(--accent-gold); }
+    .prev { left: 20px; }
+    .next { right: 20px; }
+
+    .slider-dots { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 10; }
+    .dot { width: 10px; height: 10px; background: rgba(255,255,255,0.5); border-radius: 50%; cursor: pointer; transition: 0.3s; }
+    .dot.active { background: var(--accent-gold); transform: scale(1.2); }
+
+    /* Content Sections */
+    .section { margin-bottom: 40px; }
+    .section h3 { font-size: 1.4rem; color: var(--primary-navy); margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+    .section p { color: var(--text-gray); line-height: 1.8; }
+
+    /* Specs & Features */
+    .specs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+    .spec-item { background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .spec-label { font-size: 0.8rem; color: var(--text-gray); text-transform: uppercase; display: block; margin-bottom: 4px; }
+    .spec-value { font-size: 1rem; font-weight: 600; color: var(--primary-navy); }
+
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 20px; }
+    .feature-item { background: #f1f5f9; padding: 10px; border-radius: 6px; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+    .feature-item i { color: var(--accent-gold); }
+
+    /* Legal */
+    .legal-box { background: #fffbeb; border: 1px solid #fcd34d; padding: 20px; border-radius: 8px; }
+    .legal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+    /* Floors */
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .tab-btn { padding: 10px 20px; background: #f1f5f9; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: 0.3s; }
+    .tab-btn.active { background: var(--primary-navy); color: #fff; }
+    .floor-card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; background: #fff; }
+    .floor-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 700; color: var(--primary-navy); }
+    .floor-img { width: 100%; border-radius: 8px; margin-top: 15px; border: 1px solid #f1f5f9; }
+    .download-btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 15px; padding: 10px 20px; border: 1px solid var(--primary-navy); border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: 600; color: var(--primary-navy); transition: 0.2s; }
+    .download-btn:hover { background-color: var(--primary-navy); color: #fff; }
+
+    /* Sidebar */
+    .sidebar-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; position: sticky; top: 110px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .price-block { text-align: center; background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    .price-display { font-size: 1.8rem; color: var(--accent-gold); font-weight: 700; font-family: 'Playfair Display', serif; display: block; }
+    .financial-list li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+    
+    .contact-form { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+    .form-input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; }
+    .submit-btn { background: var(--primary-navy); color: #fff; padding: 14px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+    .submit-btn:hover { background: var(--accent-gold); }
+
+    /* Mobile */
+    @media (max-width: 900px) {
+        .detail-grid { grid-template-columns: 1fr; }
+        .media-container { height: 300px; }
+        .footer-container { grid-template-columns: 1fr 1fr; }
+        .menu-toggle { display: block; }
+        nav { position: absolute; top: 100%; left: 0; width: 100%; background: var(--white); padding: 1rem 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; flex-direction: column; align-items: center; }
+        nav.active { display: flex; }
+        nav ul { flex-direction: column; gap: 1.5rem; width: 100%; justify-content: center; }
+    }
+    @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+        <img src="images/ArkaMainFrontElevation.PNG" alt="ARKA Realty" class="logo-img">
+    </div>
+    <div class="menu-toggle" id="mobile-menu">
+        <i class="fas fa-bars"></i>
+    </div>
+    <nav id="navbar">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="properties.html" class="active">Properties</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+  </header>
+
+  <div class="content-wrapper">
+    <div id="loading" style="text-align:center; padding: 100px;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary-navy);"></i>
+        <p style="margin-top: 15px;">Loading property details...</p>
+    </div>
+
+    <div id="prop-container" class="container-details" style="display:none;">
+        <a href="properties.html" class="back-btn">&larr; Back to Properties</a>
+
+        <div class="prop-header">
+            <div id="tag-container" style="margin-bottom: 10px;"></div>
+            <h1 id="prop-title">Loading Title...</h1>
+            <div class="prop-location">
+                <i class="fas fa-map-marker-alt" style="color: var(--accent-gold);"></i> 
+                <span id="prop-location">Loading Location...</span>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            <main>
+                <div class="media-container">
+                    <div id="slider" class="slider-wrapper"></div>
+                    <button class="slider-arrow prev" onclick="moveSlide(-1)">&#10094;</button>
+                    <button class="slider-arrow next" onclick="moveSlide(1)">&#10095;</button>
+                    <div id="slider-dots" class="slider-dots"></div>
+                </div>
+
+                <section class="section">
+                    <h3>Property Overview</h3>
+                    <p id="prop-desc"></p>
+                    <p id="prop-nearby" style="margin-top:10px; font-weight:500; color:var(--primary-navy);"></p>
+                    <div class="feature-grid" id="features-list"></div>
+                </section>
+
+                <section class="section">
+                    <h3>Technical Specifications</h3>
+                    <div class="specs-grid" id="tech-specs-grid"></div>
+                </section>
+
+                <section class="section">
+                    <h3>Legal & Compliance</h3>
+                    <div class="legal-box">
+                        <div class="legal-grid" id="legal-grid"></div>
+                    </div>
+                </section>
+
+                <section class="section" id="floor-section">
+                    <h3>Floor Plans</h3>
+                    <div class="tabs" id="floor-tabs"></div>
+                    <div id="floorDetails"></div>
+                </section>
+            </main>
+
+            <aside>
+                <div class="sidebar-card">
+                    <div class="price-block">
+                        <span class="price-display" id="prop-price"></span>
+                        <small style="color:var(--text-gray)">Price / Rent</small>
+                    </div>
+
+                    <h4 style="font-size:1rem; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:15px;">Financial Details</h4>
+                    <ul class="financial-list" id="financial-list"></ul>
+
+                    <h4 style="margin-top:30px; margin-bottom: 15px; color: var(--primary-navy);">Make an Enquiry</h4>
+                    <form id="contactForm" class="contact-form">
+                        <input required type="text" id="name" class="form-input" placeholder="Full Name">
+                        <input required type="email" id="email" class="form-input" placeholder="Email Address">
+                        <input type="tel" id="phone" class="form-input" placeholder="Phone Number">
+                        <select id="intent" class="form-input">
+                            <option>Request Brochure</option>
+                            <option>Schedule Viewing</option>
+                            <option>Discuss Pricing</option>
+                        </select>
+                        <textarea id="msg" rows="3" class="form-input" placeholder="Message..."></textarea>
+                        <button type="submit" class="submit-btn">Send Enquiry</button>
+                    </form>
+                    <div id="formMsg" style="margin-top:10px; font-size:0.9rem; text-align:center;"></div>
+                </div>
+            </aside>
+        </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-container">
+        <div class="footer-col">
+            <div class="footer-logo">
+                <img src="images/Arkafooter.png" alt="ARKA Realty" class="footer-logo-img">
+            </div>
+            <p class="footer-text">
+                Redefining commercial real estate with a fresh, modern approach. Connecting businesses with exceptional spaces.
+            </p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+        <div class="footer-col">
+            <h4>Properties</h4>
+            <ul class="footer-links">
+                <li><a href="#">Office Spaces</a></li>
+                <li><a href="#">Retail Stores</a></li>
+                <li><a href="#">Industrial</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Services</h4>
+            <ul class="footer-links">
+                <li><a href="#">Leasing</a></li>
+                <li><a href="#">Management</a></li>
+                <li><a href="#">Consultancy</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Subscribe</h4>
+            <form class="subscribe-form">
+                <input type="email" class="subscribe-input" placeholder="Your email">
+                <button class="subscribe-btn">Go</button>
+            </form>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 ARKA Realty. All Rights Reserved.</p>
+        <div class="footer-legal">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+        </div>
+    </div>
+  </footer>
+
+  <script>
+    // --- SETUP ---
+    const mobileMenuBtn = document.getElementById('mobile-menu');
+    const navbar = document.getElementById('navbar');
+    if(mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', () => {
+            navbar.classList.toggle('active');
+            const icon = mobileMenuBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+    }
+
+    const API_BASE = window.__API_BASE__ || 'http://localhost:4000';
+    const urlParams = new URLSearchParams(window.location.search);
+    const propId = urlParams.get('id');
+
+    // Default Fallback to avoid empty screen
+    const defaultProperty = {
+        title: "ARKA Towers (Demo)", 
+        location: "Default Location", 
+        price: "Contact for details", 
+        description: "The requested property could not be found or loaded. This is placeholder content.",
+        imageUrl: "https://via.placeholder.com/800x500?text=No+Data",
+        images: [],
+        details: {},
+        financials: {},
+        legal: {},
+        floors: []
+    };
+
+    // --- LOAD DATA ---
+    async function init() {
+        if(!propId) { 
+            // Case 1: No ID param in URL
+            console.warn("No Property ID specified.");
+            renderProperty(defaultProperty);
+            document.getElementById('prop-title').innerText = "Property Not Selected";
+            return; 
+        }
+
+        try {
+            const res = await fetch(`${API_BASE}/api/properties`);
+            
+            if(!res.ok) throw new Error("Server Error");
+            
+            const properties = await res.json();
+            const prop = properties.find(p => p._id === propId);
+            
+            if(prop) {
+                renderProperty(prop);
+            } else {
+                console.error("Property ID not found.");
+                renderProperty(defaultProperty);
+                document.getElementById('prop-title').innerText = "Property Not Found";
+            }
+        } catch(err) { 
+            console.error("Fetch Error:", err);
+            renderProperty(defaultProperty);
+            document.getElementById('prop-title').innerText = "Connection Error";
+            document.getElementById('prop-desc').innerText = "Could not connect to the server. Ensure the backend is running.";
+        }
+    }
+
+    function renderProperty(prop) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('prop-container').style.display = 'block';
+
+        // 1. Text Info
+        document.getElementById('prop-title').innerText = prop.title || "Untitled";
+        document.getElementById('prop-location').innerText = prop.address || prop.location || "";
+        document.getElementById('prop-desc').innerText = prop.description || "";
+        document.getElementById('prop-nearby').innerText = prop.nearby ? `📍 ${prop.nearby}` : "";
+        
+        document.getElementById('tag-container').innerHTML = `
+            <span class="tag primary">${prop.tag || 'Available'}</span>
+            <span class="tag category">${prop.category || 'Commercial'}</span>
+        `;
+
+        // 2. Slideshow Logic
+        const slider = document.getElementById('slider');
+        const dotsContainer = document.getElementById('slider-dots');
+        let slides = [];
+
+        // Check for images array, then fallback to single image
+        if (prop.images && Array.isArray(prop.images) && prop.images.length > 0) {
+            prop.images.forEach(src => slides.push(`<img src="${src}">`));
+        } else if (prop.imageUrl) {
+            slides.push(`<img src="${prop.imageUrl}">`);
+        }
+
+        // Check for videos
+        if (prop.videos && Array.isArray(prop.videos) && prop.videos.length > 0) {
+            prop.videos.forEach(v => slides.push(`<video src="${v}" controls></video>`));
+        } else if (prop.videoUrl) {
+            slides.push(`<video src="${prop.videoUrl}" controls></video>`);
+        }
+
+        if (slides.length === 0) slides.push(`<div style="color:white; font-size:1.2rem;">No Media Available</div>`);
+
+        slider.innerHTML = slides.map((content, i) => `<div class="slide ${i===0?'active':''}" data-index="${i}">${content}</div>`).join('');
+        dotsContainer.innerHTML = slides.map((_, i) => `<div class="dot ${i===0?'active':''}" onclick="setSlide(${i})"></div>`).join('');
+
+        window.totalSlides = slides.length;
+        window.currentSlide = 0;
+        
+        // Auto Play if more than 1 slide
+        if(slides.length > 1) setInterval(() => moveSlide(1), 5000);
+
+        // 3. Technical Specs
+        const d = prop.details || {};
+        const cat = prop.category || 'Office';
+        let specsHtml = "";
+
+        // Safe helpers
+        const addSpec = (label, val) => { if(val) specsHtml += `<div class="spec-item"><span class="spec-label">${label}</span><span class="spec-value">${val}</span></div>`; };
+
+        addSpec("Carpet Area", d.carpetArea);
+        addSpec("Condition", d.condition);
+
+        if(cat === 'Retail') {
+            addSpec("Frontage", d.frontage);
+            addSpec("Footfall", d.footfall);
+        } else if(cat === 'Warehouse') {
+            addSpec("Clear Height", d.clearHeight);
+            addSpec("Floor Load", d.floorLoad);
+        } else if(cat === 'Coworking') {
+            addSpec("Capacity", d.capacity);
+        }
+        
+        document.getElementById('tech-specs-grid').innerHTML = specsHtml || "<div style='color:#666'>No specific details listed.</div>";
+
+        // 4. Financials
+        const f = prop.financials || {};
+        document.getElementById('prop-price').innerText = prop.price || f.rent || "On Request";
+        let finHtml = "";
+        if(f.deposit) finHtml += `<li><span>Deposit</span> <strong>${f.deposit}</strong></li>`;
+        if(f.cam) finHtml += `<li><span>CAM</span> <strong>${f.cam}</strong></li>`;
+        if(f.lockIn) finHtml += `<li><span>Lock-in</span> <strong>${f.lockIn}</strong></li>`;
+        document.getElementById('financial-list').innerHTML = finHtml || "<li><span>Terms</span> <strong>Contact for details</strong></li>";
+
+        // 5. Legal
+        const l = prop.legal || {};
+        let legalHtml = "";
+        if(l.zoning) legalHtml += `<div><small style="color:#64748B">Zoning</small><div style="font-weight:600">${l.zoning}</div></div>`;
+        if(l.ocStatus) legalHtml += `<div><small style="color:#64748B">OC Status</small><div style="font-weight:600">${l.ocStatus}</div></div>`;
+        document.getElementById('legal-grid').innerHTML = legalHtml || "<div>Contact for legal info.</div>";
+
+        // 6. Floors
+        const floors = prop.floors || [];
+        if(floors.length > 0) {
+            window.propFloors = floors;
+            document.getElementById('floor-tabs').innerHTML = floors.map((f, i) => `<button class="tab-btn ${i===0?'active':''}" onclick="switchFloor(${i})">${f.title}</button>`).join('');
+            switchFloor(0);
+        } else {
+            document.getElementById('floor-section').style.display = 'none';
+        }
+    }
+
+    // --- SLIDESHOW FUNCTIONS ---
+    window.moveSlide = function(n) {
+        if(!window.totalSlides || window.totalSlides <= 1) return;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        
+        slides[window.currentSlide].classList.remove('active');
+        if(dots.length) dots[window.currentSlide].classList.remove('active');
+
+        window.currentSlide = (window.currentSlide + n + window.totalSlides) % window.totalSlides;
+
+        slides[window.currentSlide].classList.add('active');
+        if(dots.length) dots[window.currentSlide].classList.add('active');
+    }
+
+    window.setSlide = function(n) {
+        const slides = document.querySelectorAll('.slide');
+        if(!slides.length) return;
+        
+        document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+        
+        window.currentSlide = n;
+        slides[n].classList.add('active');
+        document.querySelectorAll('.dot')[n].classList.add('active');
+    }
+
+    window.switchFloor = function(index) {
+        const f = window.propFloors[index];
+        const img = f.image ? `<img src="${f.image}" class="floor-img">` : '';
+        const downloadLink = f.image ? `<a href="${f.image}" download class="download-btn"><i class="fas fa-download"></i> Download Plan</a>` : '';
+        
+        document.getElementById('floorDetails').innerHTML = `
+            <div class="floor-card">
+                <div class="floor-header"><span>${f.title}</span><span style="color:var(--accent-gold)">${f.availability}</span></div>
+                <div><strong>Area:</strong> ${f.area || 'N/A'}</div>
+                ${img} ${downloadLink}
+            </div>
+        `;
+        document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i===index));
+    };
+
+    // FORM
+    document.getElementById('contactForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const msgDiv = document.getElementById('formMsg');
+        msgDiv.innerText = "Sending...";
+        
+        const payload = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            interest: document.getElementById('prop-title').innerText,
+            message: document.getElementById('msg').value
+        };
+
+        try {
+            const res = await fetch(`${API_BASE}/send-email`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if(res.ok) { msgDiv.style.color = 'green'; msgDiv.innerText = 'Enquiry Sent Successfully!'; e.target.reset(); }
+            else throw new Error("Failed");
+        } catch(err) { msgDiv.style.color = 'red'; msgDiv.innerText = "Error sending."; }
+    });
+
+    init();
+  </script>
+</body>
+</html>

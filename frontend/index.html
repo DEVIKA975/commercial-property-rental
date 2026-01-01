@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARKA | Modern Commercial Real Estate</title>
     
+    <script src="js/config.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -62,37 +64,14 @@
             display: inline-block;
         }
 
-        /* Navigation Line Effect (Gold) */
         nav a::after { 
-            content: ''; 
-            position: absolute; 
-            left: 0; 
-            bottom: 0; 
-            width: 0; 
-            height: 2px; 
-            background-color: var(--accent-gold); 
-            transition: width 0.3s ease; 
+            content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 2px; 
+            background-color: var(--accent-gold); transition: width 0.3s ease; 
         }
 
-        /* 1. Show Line on Hover OR Active */
-        nav a:hover::after, 
-        nav a.active::after { 
-            width: 100%; 
-        }
-
-        /* 2. HOVER EFFECT: Scale Up & Navy Blue */
-        nav a:hover { 
-            color: var(--primary-navy); 
-            transform: scale(1.15); 
-            text-shadow: 0 0 .5px var(--primary-navy); 
-        }
-
-        /* 3. ACTIVE PAGE EFFECT: Black/Navy Text, Gold Line, No Scale */
-        nav a.active { 
-            color: var(--primary-navy); /* Black (Navy) Text */
-            font-weight: 700; 
-            transform: none; /* Stays still */
-        }
+        nav a:hover::after, nav a.active::after { width: 100%; }
+        nav a:hover { color: var(--primary-navy); transform: scale(1.15); text-shadow: 0 0 .5px var(--primary-navy); }
+        nav a.active { color: var(--primary-navy); font-weight: 700; transform: none; }
 
         .menu-toggle { display: none; font-size: 1.5rem; color: var(--primary-navy); cursor: pointer; z-index: 1001; }
 
@@ -127,21 +106,61 @@
         .trust-item h4 { font-size: 1.1rem; color: var(--primary-navy); margin-bottom: 0.5rem; }
         .trust-item p { color: var(--text-gray); font-size: 0.9rem; }
 
-        /* --- PROPERTIES SECTION --- */
-        .properties-section { padding: 5rem 5%; max-width: 1200px; margin: 0 auto; }
-        .section-header { margin-bottom: 3rem; text-align: left; }
+        /* --- PROPERTIES SECTION (UPDATED FOR SCROLL) --- */
+        .properties-section { padding: 5rem 5%; max-width: 100%; /* Allow full width for scroll */ overflow: hidden; }
+        .section-header { margin-bottom: 3rem; text-align: left; max-width: 1200px; margin-left: auto; margin-right: auto; }
         .section-header h2 { font-size: 2.5rem; color: var(--primary-navy); }
-        .properties-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-        .property-card { background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; }
+
+        /* HORIZONTAL SCROLL CONTAINER */
+        .featured-scroller {
+            display: flex;
+            gap: 30px;
+            overflow-x: auto;
+            padding-bottom: 30px; /* Space for scrollbar/shadow */
+            padding-left: 5%; /* Align with page padding */
+            padding-right: 5%;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: thin; /* Firefox */
+            scrollbar-color: var(--accent-gold) #eee;
+            -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+        }
+
+        /* Custom Scrollbar for Chrome/Safari */
+        .featured-scroller::-webkit-scrollbar { height: 8px; }
+        .featured-scroller::-webkit-scrollbar-track { background: #eee; border-radius: 4px; }
+        .featured-scroller::-webkit-scrollbar-thumb { background-color: var(--accent-gold); border-radius: 4px; }
+
+        /* Loading Msg */
+        .loading-msg { text-align: center; width: 100%; padding: 40px; font-size: 1.2rem; color: var(--text-gray); }
+
+        /* Property Card Styles (Fixed width for scrolling) */
+        .property-card { 
+            background: var(--white); 
+            border-radius: 8px; 
+            overflow: hidden; 
+            box-shadow: var(--shadow-sm); 
+            transition: transform 0.3s, box-shadow 0.3s; 
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column; 
+            text-decoration: none; 
+            color: inherit;
+            
+            /* KEY FOR SCROLLING: Don't shrink, set fixed width */
+            flex: 0 0 auto; 
+            width: 350px; 
+            scroll-snap-align: start;
+        }
+
         .property-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
         .card-image { height: 250px; background-color: #eee; position: relative; }
         .card-image img { width: 100%; height: 100%; object-fit: cover; }
         .card-tag { position: absolute; top: 15px; left: 15px; background: var(--primary-navy); color: var(--white); padding: 0.3rem 0.8rem; font-size: 0.75rem; font-weight: 600; border-radius: 2px; text-transform: uppercase; }
-        .card-details { padding: 1.5rem; }
+        .card-details { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
         .price { color: var(--accent-gold); font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; display: block; }
-        .card-details h4 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-dark); }
+        .card-details h4 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .location { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 5px; }
-        .specs { display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 1rem; font-size: 0.85rem; color: var(--text-gray); }
+        .specs { display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 1rem; font-size: 0.85rem; color: var(--text-gray); margin-top: auto; }
 
         /* --- SERVICES SECTION --- */
         .services-section { padding: 5rem 5%; background-color: var(--bg-light); max-width: 1200px; margin: 0 auto; border-top: 1px solid #eee; }
@@ -222,6 +241,7 @@
             .footer-bottom { flex-direction: column; gap: 1rem; }
             .enquiry-form .form-group label { text-align: left; }
             .modal-content { width: 90%; margin: 20% auto; }
+            .property-card { width: 85vw; /* Make cards wider on mobile */ }
         }
     </style>
 </head>
@@ -308,57 +328,11 @@
     <section class="properties-section">
         <div class="section-header">
             <h2>Featured Properties</h2>
-            <p style="color: var(--text-gray);">Handpicked locations offering superior business advantages.</p>
+            <p style="color: var(--text-gray);">Handpicked locations offering superior business advantages. <strong>Scroll right for more. &rarr;</strong></p>
         </div>
 
-        <div class="properties-grid">
-            <div class="property-card">
-                <div class="card-image">
-                    <span class="card-tag">For Lease</span>
-                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop" alt="Office Interior">
-                </div>
-                <div class="card-details">
-                    <span class="price">$45.00 / sqft</span>
-                    <h4>Skyline Tech Park</h4>
-                    <p class="location"><i class="fas fa-map-marker-alt"></i> Downtown Financial District</p>
-                    <div class="specs">
-                        <span><i class="fas fa-ruler-combined"></i> 5,000 sqft</span>
-                        <span><i class="fas fa-building"></i> Grade A Office</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="property-card">
-                <div class="card-image">
-                    <span class="card-tag">For Sale</span>
-                    <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop" alt="Modern Office">
-                </div>
-                <div class="card-details">
-                    <span class="price">$2,500,000</span>
-                    <h4>Meridian Plaza</h4>
-                    <p class="location"><i class="fas fa-map-marker-alt"></i> West End Business Hub</p>
-                    <div class="specs">
-                        <span><i class="fas fa-ruler-combined"></i> 12,500 sqft</span>
-                        <span><i class="fas fa-store"></i> Mixed Use</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="property-card">
-                <div class="card-image">
-                    <span class="card-tag">For Lease</span>
-                    <img src="https://images.unsplash.com/photo-1577412647305-991150c7d163?q=80&w=2070&auto=format&fit=crop" alt="Conference Room">
-                </div>
-                <div class="card-details">
-                    <span class="price">$38.00 / sqft</span>
-                    <h4>The Atrium Center</h4>
-                    <p class="location"><i class="fas fa-map-marker-alt"></i> North Tech Corridor</p>
-                    <div class="specs">
-                        <span><i class="fas fa-ruler-combined"></i> 3,200 sqft</span>
-                        <span><i class="fas fa-couch"></i> Furnished</span>
-                    </div>
-                </div>
-            </div>
+        <div class="featured-scroller" id="featured-list">
+             <div class="loading-msg">Loading featured properties...</div>
         </div>
     </section>
 
@@ -469,10 +443,67 @@
         }
     });
 
+    // --- NEW LOGIC: Horizontal Scroll for Features ---
+    async function loadFeatured() {
+        const container = document.getElementById('featured-list');
+        
+        try {
+            const baseUrl = (window.__API_BASE__ || 'http://localhost:4000');
+            const res = await fetch(`${baseUrl}/api/properties`);
+            
+            if (!res.ok) throw new Error("Failed to connect to backend");
+
+            const allProps = await res.json();
+            
+            // UPDATED: No more slice(0,3). Load ALL properties.
+            const featuredProps = allProps; 
+            
+            container.innerHTML = ''; 
+
+            if (featuredProps.length === 0) {
+                container.innerHTML = '<div class="loading-msg">No featured properties at the moment.</div>';
+                return;
+            }
+
+            featuredProps.forEach(prop => {
+                const isArka = prop.title.toLowerCase().includes("arka");
+                const detailLink = isArka ? "property-details.html" : "contact.html";
+                const imgSrc = prop.imageUrl || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800';
+
+                // NOTE: card-image removed "featured" tag for cleaner look, added hover effect
+                const cardHtml = `
+                    <a href="${detailLink}" class="property-card">
+                        <div class="card-image">
+                            <span class="card-tag">${prop.tag || 'Featured'}</span>
+                            <img src="${imgSrc}" alt="${prop.title}">
+                        </div>
+                        <div class="card-details">
+                            <span class="price">${prop.price}</span>
+                            <h4>${prop.title}</h4>
+                            <p class="location"><i class="fas fa-map-marker-alt"></i> ${prop.location}</p>
+                            
+                            <div class="specs">
+                                <span><i class="fas fa-ruler-combined"></i> View Details</span>
+                                <span><i class="fas fa-building"></i> Commercial</span>
+                            </div>
+                        </div>
+                    </a>
+                `;
+                container.insertAdjacentHTML('beforeend', cardHtml);
+            });
+
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = '<div class="loading-msg" style="color:red">Backend not connected. Ensure server is running.</div>';
+        }
+    }
+    
+    // Run on load
+    loadFeatured();
+
+    // --- ENQUIRY FORM LOGIC ---
     document.getElementById('enquiryForm').addEventListener('submit', async (e) => {
       e.preventDefault(); 
-      
-      // 1. Get Values
       const name  = document.getElementById('name').value.trim();
       const email = document.getElementById('email').value.trim();
       const phone = document.getElementById('phone').value.trim();
@@ -481,15 +512,12 @@
 
       formMsg.textContent = "";
 
-      // 2. Validate
       if (!name || !email || !phone) {
           formMsg.style.color = "#B91C1C"; 
           formMsg.textContent = "Please fill in all required fields.";
           return; 
       }
 
-      // 3. Create Payload (CORRECT FORMAT for Backend Schema)
-      // We send individual fields so the DB can save them properly
       const payload = {
         name: name,       
         email: email,     
@@ -513,46 +541,28 @@
           }
         );
 
-        const data = await response.json();
-
         if (response.ok) {
           formMsg.style.color = "#15803D"; 
           formMsg.textContent = "Enquiry received! Our team will contact you shortly.";
           document.getElementById('enquiryForm').reset();
         } else {
-          console.error("Server Error:", data);
-          // If the error is regarding Auth, give a hint
-          if(data.error && data.error.includes("authorization")) {
-             formMsg.style.color = "#B91C1C"; 
-             formMsg.textContent = "System maintenance: Email service needs re-authorization.";
-          } else {
-             formMsg.style.color = "#B91C1C"; 
-             formMsg.textContent = "Failed to send enquiry. Please try again.";
-          }
+          formMsg.style.color = "#B91C1C"; 
+          formMsg.textContent = "Failed to send enquiry.";
         }
       } catch (err) {
-        console.error(err);
         formMsg.style.color = "#B91C1C"; 
         formMsg.textContent = "Connection error. Is the server running?";
       }
     });
 
-    // Modal Logic (Privacy/Terms)
+    // Modal Logic
     const modal = document.getElementById("legalModal");
     const modalTitle = document.getElementById("modalTitle");
     const modalBody = document.getElementById("modalBody");
-
     const contentData = {
-        privacy: {
-            title: "Privacy Policy",
-            body: "<p>Your privacy is important to us. This policy outlines how we collect, use, and protect your personal information.</p><br><strong>1. Information Collection</strong><br>We collect information you provide directly to us, such as when you fill out a form or contact us via email.</p><br><strong>2. Use of Information</strong><br>We use the information to provide, maintain, and improve our services, including responding to your inquiries.</p><br><strong>3. Data Security</strong><br>We implement security measures to ensure your data is protected against unauthorized access.</p>"
-        },
-        terms: {
-            title: "Terms of Service",
-            body: "<p>Welcome to ARKA Realty. By accessing our website, you agree to be bound by these terms of service.</p><br><strong>1. Services</strong><br>ARKA Realty provides commercial real estate listings and management services. Information on this site is for general purpose only.</p><br><strong>2. User Conduct</strong><br>You agree not to use the website for any unlawful purpose or to solicit others to perform or participate in any unlawful acts.</p><br><strong>3. Limitation of Liability</strong><br>ARKA Realty shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use of our services.</p>"
-        }
+        privacy: { title: "Privacy Policy", body: "<p>Your privacy is important to us...</p>" },
+        terms: { title: "Terms of Service", body: "<p>Welcome to ARKA Realty...</p>" }
     };
-
     function openModal(type) {
         if(contentData[type]) {
             modalTitle.innerText = contentData[type].title;
@@ -560,17 +570,8 @@
             modal.style.display = "block";
         }
     }
-
-    function closeModal() {
-        modal.style.display = "none";
-    }
-
-    // Close if clicked outside
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
+    function closeModal() { modal.style.display = "none"; }
+    window.onclick = function(event) { if (event.target == modal) modal.style.display = "none"; }
     </script>
 </body>
 </html>

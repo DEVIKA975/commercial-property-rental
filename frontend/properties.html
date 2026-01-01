@@ -4,120 +4,337 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Properties | ARKA Realty</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        window.__API_BASE__ = 'http://localhost:4000';
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --primary: #0F172A; --gold: #C5A059; --bg: #F8FAFC; --white: #ffffff; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; color: #334155; }
+        /* ================= COMMON STYLES ================= */
+        :root { 
+            --primary-navy: #0F172A; 
+            --secondary-navy: #1E293B; 
+            --accent-gold: #C5A059; 
+            --accent-gold-hover: #b08d4b; 
+            --text-dark: #1E293B; 
+            --text-gray: #64748B; 
+            --text-light-gray: #94A3B8; 
+            --bg-light: #F8FAFC; 
+            --white: #ffffff; 
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1); 
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15); 
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; color: var(--text-dark); background-color: var(--bg-light); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+        h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
         
         /* HEADER */
-        header { background: var(--white); padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        .logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--primary); text-decoration:none;}
-        nav a { text-decoration: none; color: #334155; margin-left: 2rem; font-weight: 500; transition: 0.3s; }
-        nav a:hover { color: var(--gold); }
+        header { background: var(--white); height: 90px; padding: 0 5%; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; }
+        .logo { width: 200px; height: 100%; display: flex; align-items: center; position: relative; }
+        .logo-img { position: absolute; height: 170px; width: auto; mix-blend-mode: multiply; }
+        nav { width: 50%; }
+        nav ul { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        nav a { font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 500; color: var(--text-dark); position: relative; padding-bottom: 5px; transition: all 0.3s ease; display: inline-block; }
+        nav a::after { content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 2px; background-color: var(--accent-gold); transition: width 0.3s ease; }
+        nav a:hover::after, nav a.active::after { width: 100%; }
+        nav a:hover { color: var(--primary-navy); transform: scale(1.15); text-shadow: 0 0 .5px var(--primary-navy); }
+        nav a.active { color: var(--primary-navy); font-weight: 700; transform: none; }
+        .menu-toggle { display: none; font-size: 1.5rem; color: var(--primary-navy); cursor: pointer; z-index: 1001; }
 
-        /* GRID */
-        .container { max-width: 1200px; margin: 4rem auto; padding: 0 20px; }
-        .page-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; text-align: center; color: var(--primary); margin-bottom: 3rem; }
+        /* HERO & FILTER */
+        .properties-hero { background-color: var(--primary-navy); color: var(--white); padding: 8rem 5% 3rem; text-align: center; }
+        .properties-hero h1 { font-size: 3rem; margin-bottom: 1rem; }
+        .properties-hero p { font-size: 1.1rem; color: var(--text-light-gray); max-width: 600px; margin: 0 auto; }
         
-        .property-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
-        }
+        .filter-section { background: var(--white); padding: 1.5rem 5%; border-bottom: 1px solid #eee; position: sticky; top: 90px; z-index: 900; box-shadow: var(--shadow-sm); }
+        .filter-container { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; align-items: center; }
+        .filter-select { padding: 0.6rem 1rem; border: 1px solid #ddd; border-radius: 4px; font-family: 'Inter', sans-serif; color: var(--text-dark); outline: none; }
+        .filter-btn { background-color: var(--accent-gold); color: var(--white); border: none; padding: 0.6rem 1.5rem; border-radius: 4px; cursor: pointer; font-weight: 600; }
+        .filter-btn:hover { background-color: var(--accent-gold-hover); }
 
-        /* CARD STYLE */
-        .property-card {
-            background: var(--white); border-radius: 12px; overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: transform 0.3s ease; position: relative;
-        }
-        .property-card:hover { transform: translateY(-5px); }
+        /* LISTINGS GRID */
+        .listings-section { padding: 4rem 5%; background-color: var(--bg-light); flex: 1; }
+        .listings-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2.5rem; }
         
-        .prop-image { width: 100%; height: 250px; object-fit: cover; background-color: #eee; }
+        .property-card { background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; text-decoration: none; color: inherit; height: 100%; border: 1px solid #eee; }
+        .property-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--accent-gold); }
         
-        .card-tag { position: absolute; top: 15px; left: 15px; background: var(--primary); color: var(--white); padding: 0.3rem 0.8rem; font-size: 0.75rem; font-weight: 600; border-radius: 2px; text-transform: uppercase; }
-
-        .prop-details { padding: 1.5rem; }
-        .prop-price { color: var(--gold); font-weight: 700; font-size: 1.25rem; margin-bottom: 0.5rem; display: block; }
-        .prop-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--primary); margin: 0 0 0.5rem 0; }
-        .prop-location { color: #64748B; font-size: 0.9rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 5px; }
+        .card-image { position: relative; height: 250px; background-color: #eee; }
+        .card-image img { width: 100%; height: 100%; object-fit: cover; }
+        .card-tag { position: absolute; top: 15px; left: 15px; background: var(--primary-navy); color: var(--white); padding: 0.3rem 0.8rem; font-size: 0.75rem; font-weight: 600; border-radius: 2px; text-transform: uppercase; }
         
-        .prop-desc { 
-            color: #475569; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; 
+        .card-details { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .price { color: var(--accent-gold); font-weight: 700; font-size: 1.25rem; margin-bottom: 0.5rem; display: block; }
+        .card-details h4 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 700; }
+        .location { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 5px; }
+        
+        /* --- FIX START: Added standard line-clamp property --- */
+        .description { 
+            font-size: 0.9rem; 
+            color: var(--text-gray); 
+            margin-bottom: 1.5rem; 
+            line-height: 1.5; 
+            flex-grow: 1; 
             display: -webkit-box; 
+            line-clamp: 3; /* Standard property added here */
             -webkit-line-clamp: 3; 
-            line-clamp: 3; /* Fixed CSS compatibility warning */
             -webkit-box-orient: vertical; 
             overflow: hidden; 
         }
+        /* --- FIX END --- */
         
-        .btn-view {
-            display: inline-block; width: 100%; text-align: center;
-            padding: 1rem; background: var(--primary); color: white;
-            text-decoration: none; font-weight: 600; border-radius: 6px;
-            transition: background 0.3s;
+        .specs { display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 1rem; font-size: 0.85rem; color: var(--text-gray); margin-top: auto; }
+        .loading-msg { grid-column: 1 / -1; text-align: center; font-size: 1.2rem; color: var(--text-gray); padding: 40px; }
+
+        /* FOOTER */
+        footer { background-color: var(--primary-navy); color: var(--white); padding: 3rem 5% 1rem; margin-top: auto; }
+        .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .footer-col h4 { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--white); }
+        .footer-text { color: var(--text-light-gray); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.8; }
+        .footer-logo { display: flex; align-items: center; margin-bottom: 0.5rem; }
+        .footer-logo-img { height: 170px; width: auto; margin-top: -30px; }
+        .social-links { display: flex; gap: 1rem; }
+        .social-links a { width: 36px; height: 36px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--white); }
+        .social-links a:hover { background: var(--accent-gold); }
+        .footer-links li { margin-bottom: 0.8rem; }
+        .footer-links a { color: var(--text-light-gray); font-size: 0.95rem; }
+        .footer-links a:hover { color: var(--accent-gold); padding-left: 5px; }
+        .subscribe-form { display: flex; gap: 10px; margin-top: 1rem; }
+        .subscribe-input { flex: 1; padding: 0.8rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: var(--white); }
+        .subscribe-btn { background: var(--accent-gold); color: var(--white); border: none; padding: 0 1.5rem; border-radius: 4px; cursor: pointer; font-weight: 600; }
+        .subscribe-btn:hover { background: var(--accent-gold-hover); }
+        .footer-bottom { padding-top: 1.5rem; text-align: center; color: var(--text-light-gray); font-size: 0.9rem; display: flex; justify-content: space-between; max-width: 1200px; margin: 0 auto; }
+        .footer-legal { display: flex; gap: 2rem; }
+        .footer-legal a { cursor: pointer; color: var(--text-light-gray); text-decoration: none; transition: 0.3s; }
+        .footer-legal a:hover { color: var(--accent-gold); }
+
+        @media (max-width: 900px) {
+            .menu-toggle { display: block; }
+            nav { position: absolute; top: 100%; left: 0; width: 100%; background: var(--white); padding: 1rem 0; box-shadow: var(--shadow-lg); display: none; flex-direction: column; align-items: center; }
+            nav.active { display: flex; }
+            nav ul { flex-direction: column; gap: 1.5rem; }
+            .listings-grid { grid-template-columns: 1fr; }
+            .footer-container { grid-template-columns: 1fr 1fr; }
+            .filter-container { flex-direction: column; align-items: stretch; }
         }
-        .btn-view:hover { background: #1E293B; }
+        @media (max-width: 600px) {
+            .footer-container { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 1rem; }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="index.html" class="logo">ARKA.</a>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="properties.html" style="color: var(--gold);">Properties</a>
-            <a href="about.html">About</a>
-            <a href="contact.html">Contact</a>
+        <div class="logo">
+            <img src="images/ArkaMainFrontElevation.PNG" alt="ARKA Realty" class="logo-img">
+        </div>
+        <div class="menu-toggle" id="mobile-menu">
+            <i class="fas fa-bars"></i>
+        </div>
+        <nav id="navbar">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="properties.html" class="active">Properties</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
         </nav>
     </header>
 
-    <div class="container">
-        <h1 class="page-title">Exclusive Listings</h1>
-        
-        <div class="property-grid" id="propertyList">
-            <p style="text-align:center; width:100%; grid-column:1/-1;">Loading properties...</p>
+    <section class="properties-hero">
+        <h1>Available Properties</h1>
+        <p>Explore our portfolio of premium commercial spaces designed for success.</p>
+    </section>
+
+    <section class="filter-section">
+        <div class="filter-container">
+            <select class="filter-select" id="typeFilter">
+                <option value="All">All Categories</option>
+                <option value="Office">Office Space</option>
+                <option value="Retail">Retail Store</option>
+                <option value="Warehouse">Industrial / Warehouse</option>
+                <option value="Coworking">Co-working Space</option>
+            </select>
+            <select class="filter-select" id="statusFilter">
+                <option value="All">All Status</option>
+                <option value="Lease">For Lease</option>
+                <option value="Sale">For Sale</option>
+            </select>
+            <button class="filter-btn" onclick="applyFilters()">Search Properties</button>
         </div>
-    </div>
+    </section>
+
+    <section class="listings-section">
+        <div class="listings-grid" id="property-list">
+            <div class="loading-msg">Loading properties...</div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="images/Arkafooter.png" alt="ARKA Realty" class="footer-logo-img">
+                </div>
+                <p class="footer-text">
+                    Redefining commercial real estate with a fresh, modern approach. Connecting businesses with exceptional spaces.
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Properties</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Office Spaces</a></li>
+                    <li><a href="#">Retail Stores</a></li>
+                    <li><a href="#">Industrial</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Leasing</a></li>
+                    <li><a href="#">Management</a></li>
+                    <li><a href="#">Consultancy</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Subscribe</h4>
+                <form class="subscribe-form">
+                    <input type="email" class="subscribe-input" placeholder="Your email">
+                    <button class="subscribe-btn">Go</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ARKA Realty. All Rights Reserved.</p>
+            <div class="footer-legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        const API_URL = "http://localhost:4000";
+    // --- STATE ---
+    let allProperties = []; 
 
-        async function loadProperties() {
-            const container = document.getElementById('propertyList');
-            try {
-                const response = await fetch(`${API_URL}/api/properties`);
-                const data = await response.json();
+    // --- NAVBAR ---
+    const mobileMenuBtn = document.getElementById('mobile-menu');
+    const navbar = document.getElementById('navbar');
+    mobileMenuBtn.addEventListener('click', () => {
+        navbar.classList.toggle('active');
+        const icon = mobileMenuBtn.querySelector('i');
+        icon.classList.toggle('fa-bars');
+        icon.classList.toggle('fa-times');
+    });
 
-                if(data.length === 0) {
-                    container.innerHTML = '<p style="text-align:center; width:100%; grid-column:1/-1;">No properties listed yet.</p>';
-                    return;
-                }
+    // --- LOAD PROPERTIES ---
+    async function loadProperties() {
+        const container = document.getElementById('property-list');
+        container.innerHTML = '<div class="loading-msg"><i class="fas fa-spinner fa-spin"></i> Loading properties...</div>';
 
-                container.innerHTML = data.map(item => `
-                    <div class="property-card">
-                        <div style="position:relative;">
-                            <img src="${item.imageUrl}" alt="${item.title}" class="prop-image" onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
-                            ${item.tag ? `<span class="card-tag">${item.tag}</span>` : ''}
-                        </div>
-                        <div class="prop-details">
-                            <span class="prop-price">${item.price}</span>
-                            <h3 class="prop-title">${item.title}</h3>
-                            <div class="prop-location"><i class="fas fa-map-marker-alt"></i> ${item.location}</div>
-                            <p class="prop-desc">${item.description}</p>
-                            <a href="contact.html" class="btn-view">Enquire Now</a>
-                        </div>
-                    </div>
-                `).join('');
+        try {
+            const res = await fetch(`${window.__API_BASE__}/api/properties`);
+            
+            if (!res.ok) throw new Error("Failed to connect to backend");
 
-            } catch (err) {
-                console.error(err);
-                container.innerHTML = '<p style="text-align:center; width:100%; color:red;">Failed to load properties. Is server running?</p>';
-            }
+            allProperties = await res.json();
+            renderProperties(allProperties);
+
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = `
+                <div class="loading-msg" style="color:red">
+                    <i class="fas fa-exclamation-circle"></i> 
+                    Could not connect to server.<br>
+                    <small>Ensure the backend is running at ${window.__API_BASE__}</small>
+                </div>`;
+        }
+    }
+
+    // --- RENDER LOGIC ---
+    function renderProperties(props) {
+        const container = document.getElementById('property-list');
+        container.innerHTML = ''; 
+
+        if (props.length === 0) {
+            container.innerHTML = '<div class="loading-msg">No properties found matching your criteria.</div>';
+            return;
         }
 
-        loadProperties();
+        props.forEach(prop => {
+            const detailLink = `property-details.html?id=${prop._id}`;
+            
+            let imgSrc = 'https://via.placeholder.com/800x500?text=No+Image';
+            
+            if (prop.images && prop.images.length > 0) {
+                imgSrc = prop.images[0];
+            } else if (prop.imageUrl) {
+                imgSrc = prop.imageUrl;
+            }
+            
+            // Smart Category Icon
+            let icon = 'fa-building';
+            if (prop.category === 'Retail') icon = 'fa-store';
+            if (prop.category === 'Warehouse') icon = 'fa-warehouse';
+            if (prop.category === 'Coworking') icon = 'fa-users';
+
+            const cardHtml = `
+                <a href="${detailLink}" class="property-card">
+                    <div class="card-image">
+                        <span class="card-tag">${prop.tag || 'For Lease'}</span>
+                        <img src="${imgSrc}" alt="${prop.title}">
+                    </div>
+                    <div class="card-details">
+                        <span class="price">${prop.price}</span>
+                        <h4>${prop.title}</h4>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> ${prop.location}</p>
+                        <p class="description">${prop.description || 'View details for more info.'}</p>
+                        
+                        <div class="specs">
+                            <span><i class="fas ${icon}"></i> ${prop.category || 'Commercial'}</span>
+                            <span>View Details <i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </a>
+            `;
+            container.insertAdjacentHTML('beforeend', cardHtml);
+        });
+    }
+
+    // --- FILTER LOGIC ---
+    function applyFilters() {
+        const type = document.getElementById('typeFilter').value;
+        const status = document.getElementById('statusFilter').value; 
+
+        const filtered = allProperties.filter(p => {
+            // Check Category
+            const matchType = (type === "All") || (p.category === type);
+            
+            // --- JS FIX: Fixed hardcoded "true" logic for Status Filter ---
+            // Assumes prop.tag holds "For Lease" or "For Sale"
+            const matchStatus = (status === "All") || (p.tag && p.tag.includes(status));
+
+            return matchType && matchStatus;
+        });
+
+        renderProperties(filtered);
+    }
+
+    // Load on start
+    loadProperties();
     </script>
 </body>
 </html>

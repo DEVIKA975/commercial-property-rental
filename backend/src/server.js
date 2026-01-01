@@ -5,197 +5,275 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { exchangeCodeForToken, sendMail } from "./smtpClient.js";
 
 dotenv.config();
 
-// --- CONFIGURATION ---
 const PORT = process.env.PORT || 4000;
 const MONGO_URI = process.env.MONGO_URI;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!MONGO_URI) {
-  console.error("❌ FATAL ERROR: MONGO_URI is not defined in .env file.");
+  console.error("❌ FATAL ERROR: MONGO_URI is not defined.");
   process.exit(1);
 }
 
 const app = express();
 
+// --- 1. MIDDLEWARE ---
 app.use(cors({
   origin: "*", 
-  methods: ["GET", "POST", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
 
-app.use(bodyParser.json({ limit: "5mb" }));
-app.use(express.json({ limit: "5mb" }));
+app.use(bodyParser.json({ limit: "100mb" }));
+app.use(express.json({ limit: "100mb" }));
+app.use(express.urlencoded({ limit: "100mb", extended: true }));
 
-// --- DATABASE ---
+// --- 2. DB CONNECTION ---
 mongoose.connect(MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected Successfully"))
+  .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ DB Error:", err));
 
-// --- SCHEMAS ---
+// --- 3. SCHEMAS ---
+
+// User Schema
 const UserSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  username: { type: String }, 
   password: { type: String, required: true },
+  role: { type: String, default: 'Agent' }, 
+  status: { type: String, default: 'Active' }, 
+  bio: String,
+  createdAt: { type: Date, default: Date.now }
 });
 const User = mongoose.model("User", UserSchema);
 
-const EnquirySchema = new mongoose.Schema({
-  name: String,
-  email: String,
+// [NEW] Lead Schema
+const LeadSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
   phone: String,
-  interest: String,
-  message: String,
-  date: { type: Date, default: Date.now },
+  source: { type: String, default: 'Website' }, // Website, Referral, Social Media
+  status: { type: String, default: 'New' },     // New, Contacted, Qualified, Lost
+  createdAt: { type: Date, default: Date.now }
+});
+const Lead = mongoose.model("Lead", LeadSchema);
+
+// Enquiry Schema
+const EnquirySchema = new mongoose.Schema({
+  name: String, email: String, phone: String, interest: String, message: String, date: { type: Date, default: Date.now },
 });
 const Enquiry = mongoose.model("Enquiry", EnquirySchema);
 
-// --- NEW: PROPERTY SCHEMA ---
+// Property Schema
 const PropertySchema = new mongoose.Schema({
-    title: String,
-    price: String,
-    location: String,
-    imageUrl: String,
-    description: String,
-    tag: String, // e.g., "For Lease" or "For Sale"
-    date: { type: Date, default: Date.now }
+  title: { type: String, required: true },
+  category: { type: String, default: 'Office' },
+  tag: String,
+  location: String,
+  address: String,
+  nearby: String,
+  images: [String], 
+  videos: [String], 
+  imageUrl: String, 
+  videoUrl: String,
+  price: String, 
+  description: String,
+  details: mongoose.Schema.Types.Mixed,
+  financials: mongoose.Schema.Types.Mixed,
+  legal: mongoose.Schema.Types.Mixed,
+  floors: [{ title: String, area: String, availability: String, image: String, notes: String }],
+  createdAt: { type: Date, default: Date.now }
 });
 const Property = mongoose.model("Property", PropertySchema);
 
-
-// --- MIDDLEWARE ---
+// --- 4. AUTH MIDDLEWARE ---
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  if (!token) return res.sendStatus(401);
+  if (!token) return res.status(401).json({ error: "Unauthorized" });
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
+    if (err) return res.status(403).json({ error: "Token expired or invalid" });
     req.user = user;
     next();
   });
 }
 
-// --- ROUTES ---
+// --- 5. ROUTES ---
 
-app.get("/", (req, res) => res.send("ARKA Backend is Running!"));
-
-// Login
+// LOGIN
 app.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ username });
-    if (!user) return res.status(400).json({ error: "User not found" });
+    const user = await User.findOne({ 
+        $or: [{ username: username }, { email: username }] 
+    });
 
+    if (!user) return res.status(400).json({ error: "User not found" });
+    
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
-
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "2h" });
-    res.json({ token });
-  } catch (err) {
-    res.status(500).json({ error: "Login failed" });
-  }
-});
-
-// --- ENQUIRY ROUTES ---
-app.post("/send-email", async (req, res) => {
-  const { name, email, phone, interest, message, to, subject } = req.body;
-  if (!name || !email || !phone) return res.status(400).json({ error: "Missing fields" });
-
-  let dbSaved = false;
-  try {
-    const newEnquiry = new Enquiry({ name, email, phone, interest, message });
-    await newEnquiry.save();
-    dbSaved = true;
-  } catch (dbError) { console.error("DB Save Error:", dbError); }
-
-  try {
-    const recipient = to || process.env.SENDER_EMAIL;
-    const emailSubject = subject || `Enquiry: ${interest}`;
-    const htmlBody = `<h3>New Enquiry</h3><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Phone:</strong> ${phone}</p><p><strong>Interest:</strong> ${interest}</p><p><strong>Message:</strong><br>${message}</p>`;
     
-    await sendMail(recipient, emailSubject, htmlBody);
-    res.json({ message: "Enquiry processed" });
-  } catch (emailError) {
-    if (dbSaved) return res.status(200).json({ message: "Saved to DB, email failed" });
-    res.status(500).json({ error: "Failed to send email" });
-  }
+    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: "12h" });
+    res.json({ token, user: { name: user.name, role: user.role } });
+  } catch (err) { res.status(500).json({ error: "Login failed" }); }
 });
 
-app.post("/admin/send-reply", authenticateToken, async (req, res) => {
-    const { to, subject, message } = req.body;
+// =========================================================
+// LEAD MANAGEMENT ROUTES (NEW)
+// =========================================================
+
+// GET Leads
+app.get("/admin/leads", authenticateToken, async (req, res) => {
     try {
-        await sendMail(to, subject, message);
-        res.json({ message: "Reply sent" });
-    } catch (err) { res.status(500).json({ error: "Failed to send" }); }
+        const leads = await Lead.find().sort({ createdAt: -1 });
+        res.json(leads);
+    } catch (err) { res.status(500).json({ error: "Fetch failed" }); }
 });
 
-app.get("/admin/enquiries", authenticateToken, async (req, res) => {
-  const enquiries = await Enquiry.find().sort({ date: -1 });
-  res.json(enquiries);
+// CREATE Lead
+app.post("/admin/leads", authenticateToken, async (req, res) => {
+    try {
+        const newLead = new Lead(req.body);
+        await newLead.save();
+        res.json({ message: "Lead created successfully" });
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.delete("/admin/enquiries/:id", authenticateToken, async (req, res) => {
-  await Enquiry.findByIdAndDelete(req.params.id);
-  res.json({ message: "Deleted" });
+// UPDATE Lead
+app.put("/admin/leads/:id", authenticateToken, async (req, res) => {
+    try {
+        await Lead.findByIdAndUpdate(req.params.id, req.body);
+        res.json({ message: "Lead updated" });
+    } catch (err) { res.status(500).json({ error: "Update failed" }); }
 });
 
+// DELETE Lead
+app.delete("/admin/leads/:id", authenticateToken, async (req, res) => {
+    try {
+        await Lead.findByIdAndDelete(req.params.id);
+        res.json({ message: "Lead deleted" });
+    } catch (err) { res.status(500).json({ error: "Delete failed" }); }
+});
 
-// --- NEW: PROPERTY ROUTES ---
+// =========================================================
+// USER MANAGEMENT ROUTES
+// =========================================================
 
-// 1. Get All Properties (Public - for properties.html)
+// GET Users
+app.get("/admin/users", authenticateToken, async (req, res) => {
+    try {
+        const users = await User.find().select("-password").sort({ createdAt: -1 });
+        res.json(users);
+    } catch (err) { res.status(500).json({ error: "Fetch failed" }); }
+});
+
+// CREATE User
+app.post("/admin/users", authenticateToken, async (req, res) => {
+    try {
+        const { name, email, password, role, status, bio } = req.body;
+        
+        const existing = await User.findOne({ email });
+        if(existing) return res.status(400).json({ error: "Email already exists" });
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newUser = new User({
+            name,
+            email,
+            username: email, 
+            password: hashedPassword,
+            role,
+            status,
+            bio
+        });
+
+        await newUser.save();
+        res.json({ message: "User created successfully" });
+    } catch (err) { 
+        console.error(err);
+        res.status(500).json({ error: err.message }); 
+    }
+});
+
+// UPDATE User
+app.put("/admin/users/:id", authenticateToken, async (req, res) => {
+    try {
+        const { password, ...updates } = req.body;
+        if(password && password.trim() !== "") {
+            const salt = await bcrypt.genSalt(10);
+            updates.password = await bcrypt.hash(password, salt);
+        }
+        await User.findByIdAndUpdate(req.params.id, updates);
+        res.json({ message: "User updated" });
+    } catch (err) { res.status(500).json({ error: "Update failed" }); }
+});
+
+// DELETE User
+app.delete("/admin/users/:id", authenticateToken, async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.id);
+        res.json({ message: "User deleted" });
+    } catch (err) { res.status(500).json({ error: "Delete failed" }); }
+});
+
+// =========================================================
+// PROPERTY ROUTES
+// =========================================================
+
 app.get("/api/properties", async (req, res) => {
     try {
-        const properties = await Property.find().sort({ date: -1 });
+        const properties = await Property.find().sort({ createdAt: -1 });
         res.json(properties);
-    } catch (err) { res.status(500).json({ error: "Failed to fetch properties" }); }
+    } catch (err) { res.status(500).json({ error: "Fetch failed" }); }
 });
 
-// 2. Add Property (Protected - for Dashboard)
 app.post("/admin/properties", authenticateToken, async (req, res) => {
     try {
         const newProperty = new Property(req.body);
         await newProperty.save();
-        res.json({ message: "Property added successfully" });
-    } catch (err) { res.status(500).json({ error: "Failed to add property" }); }
+        res.json({ message: "Created successfully" });
+    } catch (err) { 
+        console.error("Create Error:", err.message);
+        res.status(500).json({ error: "Create failed: " + err.message }); 
+    }
 });
 
-// 3. Delete Property (Protected - for Dashboard)
+app.put("/admin/properties/:id", authenticateToken, async (req, res) => {
+    try {
+        await Property.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.json({ message: "Updated successfully" });
+    } catch (err) { 
+        console.error("Update Error:", err.message);
+        res.status(500).json({ error: "Update failed: " + err.message }); 
+    }
+});
+
 app.delete("/admin/properties/:id", authenticateToken, async (req, res) => {
     try {
         await Property.findByIdAndDelete(req.params.id);
-        res.json({ message: "Property deleted" });
-    } catch (err) { res.status(500).json({ error: "Failed to delete" }); }
+        res.json({ message: "Deleted successfully" });
+    } catch (err) { res.status(500).json({ error: "Delete failed" }); }
 });
 
-
-// Auth Helpers
-app.get("/auth/login", (req, res) => {
-  const params = new URLSearchParams({
-    client_id: process.env.CLIENT_ID,
-    response_type: "code",
-    redirect_uri: process.env.REDIRECT_URI,
-    response_mode: "query",
-    scope: "offline_access openid https://outlook.office.com/SMTP.Send",
-    prompt: "consent",
-  });
-  res.redirect(`https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${params.toString()}`);
-});
-
-app.get("/auth/callback", async (req, res) => {
-  const code = req.query.code;
-  if (!code) return res.status(400).send("Missing code");
+// Enquiries & Emails
+app.get("/admin/enquiries", authenticateToken, async (req, res) => {
   try {
-    await exchangeCodeForToken(code);
-    res.send(`<h3>Success!</h3><p>Backend authorized. You can close this window.</p>`);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Auth failed.");
-  }
+    const data = await Enquiry.find().sort({ date: -1 });
+    res.json(data);
+  } catch(e) { res.status(500).json({error: "Error fetching enquiries"}); }
+});
+app.post("/send-email", async (req, res) => {
+  try {
+      const newEnquiry = new Enquiry(req.body);
+      await newEnquiry.save();
+      res.json({ message: "Saved" });
+  } catch(e) { res.status(500).json({error: "Error saving enquiry"}); }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

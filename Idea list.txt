@@ -1,0 +1,2 @@
+-Number view/click to the website. counter and get the details to database. 
+-Number view to the each properties and number of enquiries 
